@@ -2,6 +2,10 @@
 HELLO GUYS!!
 
 A few things on this and some other things.
+
+install psycopg2(Python postgreSQL adapter):
+pip install psycopg2
+
 use:
 psql -d photon -U student
 \d players
