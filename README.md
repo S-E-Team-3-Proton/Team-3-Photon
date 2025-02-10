@@ -4,7 +4,7 @@
 
 
 install psycopg2(Python postgreSQL adapter):
-pip install psycopg2
+pip install psycopg2-binary
 
 use:
 psql -d photon -U student
