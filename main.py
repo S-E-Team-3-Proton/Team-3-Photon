@@ -1,42 +1,46 @@
-from python_db import PDB
+import pygame
+from game import init_game, GameState, draw_entry_screen, handle_event
 
 def main():
-    db = PDB()
 
-    if db.connect():
-        print("works!")
-    else:
-        print("NO")
+    pygame.init()
+    pygame.font.init()
 
-    vT = 1
-    try:
-        hold1 = db.get_player(vT)
-        if hold1:
-            if hold1:
-                print(f"found player: {hold1['codename']}")
+    init_game()
 
-                if db.set_EquipID(vT, 69):
-                    print("Assigned Equipment")
-                    hID = db.get_EquipID(vT)
-                    print(f"Player e_id: {hID}")
+    SCREEN_WIDTH = 800
+    SCREEN_HEIGHT = 650
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Laser Tag Game")
 
-        elif db.add_player(vT,"Guy"):
-            print("added player")
+    photon_logo = pygame.image.load("logo.jpg")
+    photon_logo = pygame.transform.scale(photon_logo, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(photon_logo, (0, 0))
+    pygame.display.update()
+    pygame.time.wait(3000)  # Display splash screen for 3 seconds
+    
+    # Initialize game state
+    game_state = GameState()
+    
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            handle_event(event, game_state)
+        
+        draw_entry_screen(screen, game_state)
+        pygame.display.update()
+    
+    if game_state.db_connection:
+        game_state.db_connection.close()
+    pygame.quit()
+    
 
-            hold1 = db.get_player(vT)
-            if hold1:
-                print(f"found player: {hold1['codename']}")
+            
 
-                if db.set_EquipID(vT, 69):
-                    print("Assigned Equipment")
-                    hID = db.get_EquipID(vT)
-                    print(f"Player e_id: {hID}")
-
-        playersAndIDs = db.assigned_IDs()
-        print(f"All info: {playersAndIDs}")
-
-    finally:
-        db.disconnect()
+if __name__ == "__main__":
+    main()
 
             
 
