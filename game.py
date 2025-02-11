@@ -1,15 +1,5 @@
 import pygame
-import time
-import psycopg2
-
-pygame.init()
-pygame.font.init()
-
-# Screen Dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 650
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Laser Tag Game")
+from python_db import PhotonDB
 
 # Colors
 BLACK = (0, 0, 0)
@@ -19,11 +9,12 @@ GREEN = (0, 255, 0)
 GRAY = (128, 128, 128)
 
 
-# Fonts
-FONT = pygame.font.SysFont('Arial', 20)
-TITLE_FONT = pygame.font.SysFont('Arial', 24, bold=True)
-BUTTON_FONT = pygame.font.SysFont('Arial', 14)  
 
+def init_game():
+    global FONT, TITLE_FONT, BUTTON_FONT
+    FONT = pygame.font.SysFont('Arial', 20)
+    TITLE_FONT = pygame.font.SysFont('Arial', 24, bold=True)
+    BUTTON_FONT = pygame.font.SysFont('Arial', 14)
 
 class Player:
     def __init__(self, player_id="", codename="", equipment_id=None):
@@ -41,48 +32,41 @@ class GameState:
         self.active_input = None
         self.input_text = ""
         self.db_connection = None
+        self.db = PhotonDB()
         self.connect_to_db()
 
     def connect_to_db(self):
-        try:
-            self.db_connection = psycopg2.connect(
-                dbname="photon",
-                user="student",  
-                password="student",
-                host="localhost"
-            )
-        except psycopg2.Error as e:
-            print(f"Database connection error: {e}")
+        if not self.db.connect():
+            print("Failed to connect to database")
 
     def query_codename(self, player_id):
-        if self.db_connection:
-            try:
-                cursor = self.db_connection.cursor()
-                cursor.execute("SELECT codename FROM players WHERE id = %s", (player_id,))
-                result = cursor.fetchone()
-                return result[0] if result else None
-            except psycopg2.Error as e:
-                print(f"Database query error: {e}")
-                return None
-        return None
+        if not player_id.strip().isdigit():
+            return 
+        
+        player = self.db.get_player(int(player_id))
+        return player['codename'] if player else None
 
     def add_new_player(self, player_id, codename):
         """Inserts a new player into the database."""
         if not player_id.strip().isdigit() or not codename.strip():
-            return  # Prevent invalid inputs
-        try:
-            cursor = self.db_connection.cursor()
-            cursor.execute(
-                "INSERT INTO players (id, codename) VALUES (%s, %s)",
-                (int(player_id), codename)
-            )
-            self.db_connection.commit()
-        except psycopg2.Error as e:
-            print(f"Database insert error: {e}")
+            return False
+        
+        return self.db.add_player(int(player_id), codename)
+    
+    def assign_equipment(self, player_id, equipment_id):
+        if not player_id.strip().isdigit() or not equipment_id.strip().isdigit():
+            return False
+        return self.db.set_EquipID(int(player_id), int(equipment_id))
+    
+    def __del__(self):
+        if hasattr(self, 'db'):
+            self.db.disconnect()
 
 
 def draw_entry_screen(screen, game_state):
     # gradient background
+    SCREEN_HEIGHT = screen.get_height()
+    SCREEN_WIDTH = screen.get_width()
     for i in range(SCREEN_HEIGHT):
         pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
 
@@ -211,6 +195,7 @@ def handle_event(event, game_state):
             game_state.green_team = [Player() for _ in range(15)]
             game_state.current_index = 0
             game_state.active_input = None
+            game_state.db.reset_EquipID()
         elif event.key == pygame.K_F3:  # Start game
             # Implement transition to game screen
             pass
@@ -218,13 +203,15 @@ def handle_event(event, game_state):
             game_state.current_team = "green" if game_state.current_team == "red" else "red"
         elif game_state.active_input:
             if event.key == pygame.K_RETURN:
+                current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+        
+
                 if game_state.active_input == "player_id":
                     if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
                         player_id = game_state.input_text.strip()
                         game_state.current_player_id = player_id  # Store player_id safely
 
                         codename = game_state.query_codename(player_id)  # Query database for existing codename
-                        current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
                         current_team[game_state.current_index].player_id = player_id  # Store in player object
 
                         if codename:
@@ -235,21 +222,31 @@ def handle_event(event, game_state):
                     else:
                         print("⚠️ Invalid Player ID! Please enter a valid number.")
                     
-                    game_state.input_text = ""  # Clear input box
 
                 elif game_state.active_input == "equipment_id":
-                    current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
-                    current_team[game_state.current_index].equipment_id = game_state.input_text
-                    game_state.current_index += 1
-                    game_state.active_input = None
-                    game_state.input_text = ""
+                    if game_state.input_text.strip().isdigit():
+                        equipment_id = game_state.input_text.strip()
+                        if game_state.assign_equipment(current_team[game_state.current_index].player_id, equipment_id):
+                            current_team[game_state.current_index].equipment_id = equipment_id
+                            game_state.current_index += 1
+                            game_state.active_input = None
+                        else:
+                            print("⚠️ Equipment ID already in use!")
+                    else:
+                        print("⚠️ Invalid Equipment ID!")
+
                 elif game_state.active_input == "new_codename":
-                    current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
-                    player_id = current_team[game_state.current_index].player_id
-                    game_state.add_new_player(player_id, game_state.input_text)
-                    current_team[game_state.current_index].codename = game_state.input_text
-                    game_state.active_input = "equipment_id"
-                    game_state.input_text = ""
+                    if game_state.input_text.strip():
+                        codename = game_state.input_text.strip()
+                        if game_state.add_new_player(game_state.current_player_id, codename):
+                            current_team[game_state.current_index].codename = codename
+                            game_state.active_input = "equipment_id"
+                        else:
+                            print("⚠️ Failed to add player!")
+                    else:
+                        print("⚠️ Invalid Codename!")
+
+                game_state.input_text = ""  # Clear input box
             elif event.key == pygame.K_BACKSPACE:
                 game_state.input_text = game_state.input_text[:-1]
             else:
@@ -258,33 +255,5 @@ def handle_event(event, game_state):
             if game_state.current_index < 15:
                 game_state.active_input = "player_id"
 
-def main_game_loop():
-    # Splash screen
-    photon_logo = pygame.image.load("logo.jpg")
-    photon_logo = pygame.transform.scale(photon_logo, (SCREEN_WIDTH, SCREEN_HEIGHT))
-    screen.blit(photon_logo, (0, 0))
-    pygame.display.update()
-    time.sleep(3)  # Display splash screen for 3 seconds
-    
-    # Initialize game state
-    game_state = GameState()
-    
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            handle_event(event, game_state)
-        
-        draw_entry_screen(screen, game_state)
-        pygame.display.update()
-    
-    if game_state.db_connection:
-        game_state.db_connection.close()
-    pygame.quit()
 
-if __name__ == "__main__":
-    main_game_loop()
 
-if __name__ == "__main__":
-    main_game_loop()
