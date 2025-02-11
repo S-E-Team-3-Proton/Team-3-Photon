@@ -1,6 +1,6 @@
 # Team-3-Proton
 # Repository made by Nathan Fuhrman
-# Branch By Thomas, somebody needs to do sockets
+# Branch By Thomas, somebody needs to do sockets & server stufffff
 # Note 1: We increased the allotted VB memory to 8 GB
 
 
