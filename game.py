@@ -1,5 +1,7 @@
 import pygame
-from python_db import PhotonDB
+from photon_db import PhotonDB
+from client import UDPClient
+from server import UDPServer
 
 # Colors
 BLACK = (0, 0, 0)
@@ -8,20 +10,19 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 GRAY = (128, 128, 128)
 
-
-
 def init_game():
-    global FONT, TITLE_FONT, BUTTON_FONT
+    global FONT, TITLE_FONT, BUTTON_FONT, app_client, app_server
     FONT = pygame.font.SysFont('Arial', 20)
     TITLE_FONT = pygame.font.SysFont('Arial', 24, bold=True)
     BUTTON_FONT = pygame.font.SysFont('Arial', 14)
+    app_client = UDPClient("127.0.0.1") #default 
+    app_server = UDPServer("127.0.0.1") #default
 
 class Player:
     def __init__(self, player_id="", codename="", equipment_id=None):
         self.player_id = player_id
         self.codename = codename
         self.equipment_id = int(equipment_id) if equipment_id and equipment_id.isdigit() else 0
-
 
 class GameState:
     def __init__(self):
@@ -61,7 +62,6 @@ class GameState:
     def __del__(self):
         if hasattr(self, 'db'):
             self.db.disconnect()
-
 
 def draw_entry_screen(screen, game_state):
     # gradient background
@@ -162,7 +162,6 @@ def draw_entry_screen(screen, game_state):
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F12 - Clear Game", start_x + 4 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
 
-
 def draw_button(screen, text, x, y):
     button_rect = pygame.Rect(x, y, 180, 40) 
     #pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
@@ -180,8 +179,6 @@ def draw_button(screen, text, x, y):
     else:
         button_text = BUTTON_FONT.render(text, True, WHITE)
         screen.blit(button_text, (x + 10, y + 15))  # Centered vertically
-
-
 
 def handle_event(event, game_state):
     if event.type == pygame.KEYDOWN:
@@ -204,7 +201,6 @@ def handle_event(event, game_state):
         elif game_state.active_input:
             if event.key == pygame.K_RETURN:
                 current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
-        
 
                 if game_state.active_input == "player_id":
                     if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
@@ -226,6 +222,8 @@ def handle_event(event, game_state):
                 elif game_state.active_input == "equipment_id":
                     if game_state.input_text.strip().isdigit():
                         equipment_id = game_state.input_text.strip()
+                        #transmit the equipment id via app_client to generator server
+                        app_client.send_message(equipment_id)
                         if game_state.assign_equipment(current_team[game_state.current_index].player_id, equipment_id):
                             current_team[game_state.current_index].equipment_id = equipment_id
                             game_state.current_index += 1
@@ -254,6 +252,7 @@ def handle_event(event, game_state):
         elif event.key == pygame.K_RETURN:  # Start new player entry
             if game_state.current_index < 15:
                 game_state.active_input = "player_id"
-
-
-
+    #TODO add the event handler to switch network address#
+    #if event.change_network_address 
+        #app_server.set_network_address("new network address")
+        #app_client.set_network_address("new network address")

@@ -1,6 +1,7 @@
 import pygame
 from game import init_game, GameState, draw_entry_screen, handle_event
 
+
 def main():
 
     pygame.init()
