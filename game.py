@@ -1,5 +1,5 @@
 import pygame
-from photon_db import PhotonDB
+from photon_db import PDB
 from client import UDPClient
 from server import UDPServer
 
@@ -33,7 +33,7 @@ class GameState:
         self.active_input = None
         self.input_text = ""
         self.db_connection = None
-        self.db = PhotonDB()
+        self.db = PDB()
         self.connect_to_db()
 
     def connect_to_db(self):
