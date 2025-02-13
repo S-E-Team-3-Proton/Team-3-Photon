@@ -29,8 +29,6 @@ class UDPServer:
            
             print(client_msg)
             print(client_ip)
-           
-            self.udp_socket.sendto(self.bytes_to_send, address)
    
     def sendGameInfo(self): #implement this later, this wil be used to send the info
         #from generator client to update our game screen
