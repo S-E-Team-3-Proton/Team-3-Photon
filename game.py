@@ -17,6 +17,7 @@ def init_game():
     BUTTON_FONT = pygame.font.SysFont('Arial', 14)
     app_client = UDPClient("127.0.0.1") #default 
     app_server = UDPServer("127.0.0.1") #default
+    app_server.start()
 
 class Player:
     def __init__(self, player_id="", codename="", equipment_id=None):
@@ -311,10 +312,6 @@ def handle_event(event, game_state):
             elif event.key == pygame.K_RETURN:  # Start new player entry
                 if game_state.current_index < 15:
                     game_state.active_input = "player_id"
-        #TODO add the event handler to switch network address#
-        #if event.change_network_address 
-            #app_server.set_network_address("new network address")
-            #app_client.set_network_address("new network address")
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
