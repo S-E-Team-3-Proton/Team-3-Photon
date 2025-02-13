@@ -1,5 +1,5 @@
 import pygame
-from game import init_game, GameState, draw_entry_screen, handle_event
+from game import init_game, GameState, draw_view, handle_event
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
                 running = False
             handle_event(event, game_state)
         
-        draw_entry_screen(screen, game_state)
+        draw_view(screen, game_state)
         pygame.display.update()
     
     if game_state.db_connection:
