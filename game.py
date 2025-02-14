@@ -262,9 +262,16 @@ def main_game_loop():
     # Splash screen
     photon_logo = pygame.image.load("logo.jpg")
     photon_logo = pygame.transform.scale(photon_logo, (SCREEN_WIDTH, SCREEN_HEIGHT))
-    screen.blit(photon_logo, (0, 0))
-    pygame.display.update()
-    time.sleep(3)  # Display splash screen for 3 seconds
+    splash_start_time = pygame.time.get_ticks()  # Get the current time
+
+    # Display splash screen for 3 seconds
+    while pygame.time.get_ticks() - splash_start_time < 3000:
+        screen.blit(photon_logo, (0, 0))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
     
     # Initialize game state
     game_state = GameState()
