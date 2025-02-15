@@ -103,14 +103,14 @@ def draw_entry_screen(screen, game_state):
         y_pos = 100 + i * 30
 
         # Shadow effect
-        #pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25), border_radius=6)
-        pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25))
-        pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25))
-        pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25))
-        pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25))
+        pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25), border_radius=6)
+        # pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25))
+        # pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25))
+        # pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25))
+        # pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25))
 
         # Display player names
         if game_state.red_team[i].codename:
@@ -126,8 +126,8 @@ def draw_entry_screen(screen, game_state):
         x_pos = 50 if game_state.current_team == "red" else 450
         y_pos = 100 + game_state.current_index * 30  
 
-        #pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3, border_radius=8)
-        pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3)
+        pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3, border_radius=8)
+        # pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3)
 
      
       
@@ -141,8 +141,8 @@ def draw_entry_screen(screen, game_state):
         else:
             prompt_text = "Enter Data..."
         
-        #pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25), border_radius=6)  # Overwrite slot with black
-        pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25))
+        pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25), border_radius=6)  # Overwrite slot with black
+        # pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25))
 
 
         # Render the correct prompt
@@ -191,9 +191,9 @@ def draw_parameters_screen(screen, game_state):
     screen.blit(net_option, (SCREEN_WIDTH // 2 - net_option.get_width() // 2, 100))
 
     # Draw rectangle for entering text
-    pygame.draw.rect(screen, (20, 20, 20), (SCREEN_WIDTH // 2 - 150 + 3, 130 + 3, 300, 25))
-    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH // 2 - 150, 130, 304, 29), 3)
-    pygame.draw.rect(screen, BLACK, (SCREEN_WIDTH // 2 -150 + 2 , 130 + 2, 300, 25))
+    pygame.draw.rect(screen, (20, 20, 20), (SCREEN_WIDTH // 2 - 150 + 3, 130 + 3, 300, 25), border_radius=6)
+    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH // 2 - 150, 130, 304, 29), 3, border_radius=6)
+    pygame.draw.rect(screen, BLACK, (SCREEN_WIDTH // 2 -150 + 2 , 130 + 2, 300, 25), border_radius=6)
 
     # Render text prompting in box
     input_surface = FONT.render(game_state.input_text if game_state.input_text else "Enter IP:", True, WHITE)
@@ -220,8 +220,8 @@ def draw_parameters_screen(screen, game_state):
 
 def draw_button(screen, text, x, y):
     button_rect = pygame.Rect(x, y, 180, 40) 
-    #pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
-    pygame.draw.rect(screen, GRAY, button_rect)
+    pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
+    # pygame.draw.rect(screen, GRAY, button_rect)
 
     # Split text into two lines if it's too long
     words = text.split(" ")
@@ -238,99 +238,85 @@ def draw_button(screen, text, x, y):
 
 def handle_event(event, game_state):
     if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_F12:  # Clear game
-            game_state.red_team = [Player() for _ in range(15)]
-            game_state.green_team = [Player() for _ in range(15)]
-            game_state.current_index = 0
-            game_state.active_input = None
-            game_state.db.reset_EquipID()
-            return
-            
         if game_state.active_view == "entry":
-            if game_state.active_input is None:
-                game_state.active_input = "player_id"
-                
-            if event.key == pygame.K_DOWN:
-                game_state.current_index = (game_state.current_index + 1) % 15  # Move down the list
-                game_state.active_input = "player_id"
-                
-            elif event.key == pygame.K_UP:
-                game_state.current_index = (game_state.current_index - 1) % 15  # Move up the list
-                game_state.active_input = "player_id"
+            if game_state.active_input == "player_id":
+                if event.key == pygame.K_DOWN:
+                    game_state.current_index = (game_state.current_index + 1) % 15  # Move down the list
+                elif event.key == pygame.K_UP:
+                    game_state.current_index = (game_state.current_index - 1) % 15  # Move up the list
 
-            elif event.key == pygame.K_TAB:
-                game_state.current_team = "green" if game_state.current_team == "red" else "red"
-                game_state.active_input = "player_id"
-
+            if event.key == pygame.K_F12:  # Clear game
+                game_state.red_team = [Player() for _ in range(15)]
+                game_state.green_team = [Player() for _ in range(15)]
+                game_state.current_index = 0
+                game_state.active_input = None
+                game_state.db.reset_EquipID()
             elif event.key == pygame.K_F3:  # Start game
                 # Implement transition to game screen
                 pass
-                
             elif event.key == pygame.K_F2: # Switch to game parameters screen (change network address here)
                 game_state.active_view = "parameters"
                 game_state.active_input = "ip_address"
-                
+            elif event.key == pygame.K_TAB and game_state.active_input == "player_id":  # Switch teams
+                game_state.current_team = "green" if game_state.current_team == "red" else "red"
+            elif game_state.active_input:
+                if event.key == pygame.K_RETURN:
+                    current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
 
-            elif event.key == pygame.K_RETURN and game_state.active_input:
-                if not game_state.input_text.strip():
-                    return
+                    if game_state.active_input == "player_id":
+                        if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
+                            player_id = game_state.input_text.strip()
+                            game_state.current_player_id = player_id  # Store player_id safely
 
-                
-                current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
-                player = current_team[game_state.current_index]
-    
-                if game_state.active_input == "player_id":
-                    if game_state.input_text.strip().isdigit():
-                        player_id = game_state.input_text.strip()
-                        player.player_id = player_id
-                        game_state.active_input = "equipment_id"
-                    else: 
-                        print("Invalid Player ID!")
-                        return
-    
-                elif game_state.active_input == "equipment_id":
-                    if game_state.input_text.strip().isdigit():
-                        equipment_id = game_state.input_text.strip()
-                        app_client.send_message(equipment_id)
-                        if game_state.assign_equipment(player.player_id, equipment_id):
-                            player.equipment_id = equipment_id
+                            codename = game_state.query_codename(player_id)  # Query database for existing codename
+                            current_team[game_state.current_index].player_id = player_id  # Store in player object
 
-                            if not player.codename:
-                                game_state.active_input = "new_codename"
+                            if codename:
+                                current_team[game_state.current_index].codename = codename
+                                game_state.active_input = "equipment_id"  # Move to equipment entry
                             else:
-                                game_state.current_index = (game_state.current_index + 1) % 15
-                                game_state.active_input = "player_id"
+                                game_state.active_input = "new_codename"  # Ask for a new codename
                         else:
-                            print("Equipment ID already in use!")
-                    else:
-                        print("Invalid Equipment ID!")
-                    return
-
-                elif game_state.active_input == "new_codename":
-                    if game_state.input_text.strip():
-                        codename = game_state.input_text.strip()
-                        if game_state.add_new_player(player.player_id, codename):
-                            player.codename = codename
-                            game_state.active_input = "equipment_id"
-                        else:
-                            print("Failed to add player!")
-                    else:
-                        print("Invalid Codename!")
-                    return
+                            print("⚠️ Invalid Player ID! Please enter a valid number.")
                         
-                game_state.input_text = ""
 
-            elif event.key == pygame.K_BACKSPACE:
-                game_state.input_text = game_state.input_text[:-1]
-            else:
-                game_state.input_text += event.unicode
-                # elif event.key == pygame.K_RETURN:  # Start new player entry
-                #     if game_state.current_index < 15:
-                #         game_state.active_input = "player_id"
+                    elif game_state.active_input == "equipment_id":
+                        if game_state.input_text.strip().isdigit():
+                            equipment_id = game_state.input_text.strip()
+                            #transmit the equipment id via app_client to generator server
+                            app_client.send_message(equipment_id)
+                            if game_state.assign_equipment(current_team[game_state.current_index].player_id, equipment_id):
+                                current_team[game_state.current_index].equipment_id = equipment_id
+                                game_state.current_index += 1
+                                game_state.active_input = "player_id"
+                            else:
+                                print("⚠️ Equipment ID already in use!")
+                        else:
+                            print("⚠️ Invalid Equipment ID!")
+
+                    elif game_state.active_input == "new_codename":
+                        if game_state.input_text.strip():
+                            codename = game_state.input_text.strip()
+                            if game_state.add_new_player(game_state.current_player_id, codename):
+                                current_team[game_state.current_index].codename = codename
+                                game_state.active_input = "equipment_id"
+                            else:
+                                print("⚠️ Failed to add player!")
+                        else:
+                            print("⚠️ Invalid Codename!")
+
+                    game_state.input_text = ""  # Clear input box
+                elif event.key == pygame.K_BACKSPACE:
+                    game_state.input_text = game_state.input_text[:-1]
+                else:
+                    game_state.input_text += event.unicode
+            # elif event.key == pygame.K_RETURN:  # Start new player entry
+            #     if game_state.current_index < 15:
+            #         game_state.active_input = "player_id"
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
-                game_state.active_input = None
+                game_state.active_input = "player_id"
             elif event.key == pygame.K_F3:  # Start game
                 # Implement transition to game screen
                 pass
@@ -341,7 +327,7 @@ def handle_event(event, game_state):
                     app_server.set_network_address(new_ip_address)
                     game_state.active_input = None
                 else:
-                    print(" Invalid Network Address!")
+                    print("⚠️ Invalid Network Address!")
                 game_state.input_text = ""  # Clear input box
             elif event.key == pygame.K_BACKSPACE:
                 game_state.input_text = game_state.input_text[:-1]
