@@ -12,10 +12,12 @@ class UDPServer:
 
     def bind_server(self):
         try:
+            self.udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Allow rebinding
             self.udp_socket.bind((self.ip, self.port))
             print(f"UDP socket created on {self.ip}:{self.port}") 
         except Exception as e:
-            pass
+            print(f"Error binding server: {e}")  # Add logging
+
         
     def set_network_address(self, ip_In):
         """Stops the current server and restarts it with a new IP address."""
