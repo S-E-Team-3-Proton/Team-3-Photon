@@ -39,6 +39,7 @@ python3 main.py
 - Gradient backgrounds and button-based navigation
 - Error handling for database operations
 - Displays Codename of player on the player entry screen after entering information
+- Error handling for incorrect network addresses
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
