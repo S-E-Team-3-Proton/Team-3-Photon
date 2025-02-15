@@ -270,16 +270,19 @@ def handle_event(event, game_state):
                 game_state.active_view = "parameters"
                 game_state.previous_input = game_state.active_input
                 game_state.active_input = "ip_address"
-            elif event.key == pygame.K_TAB and game_state.active_input == "player_id":  # Switch teams
-                game_state.current_team = "green" if game_state.current_team == "red" else "red"
             elif game_state.active_input:
+                if event.key == pygame.K_TAB:
+                    if game_state.active_input == "player_id":
+                        game_state.current_team = "green" if game_state.current_team == "red" else "red"
+                    return
                 if event.key == pygame.K_RETURN:
                     current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+                    other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
 
-                    
                     if game_state.active_input == "player_id":
                         if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
                             player_id = game_state.input_text.strip()
+
 
                             dupe_c = any(player.player_id == player_id for player in current_team 
                                         if current_team.index(player) != game_state.current_index)
@@ -313,15 +316,18 @@ def handle_event(event, game_state):
                         if game_state.input_text.strip().isdigit():
                             equipment_id = game_state.input_text.strip()
 
-                            dupe_c = any(player.player_id == player_id for player in current_team 
-                                        if current_team.index(player) != game_state.current_index)
-                            dupe_o = any(player.player_id == player_id for player in other_team)
-                            
-                            if dupe_c or dupe_o:
-                                print("⚠️ Equip ID already registered in a team! Please enter a different ID.")
-                                game_state.input_text = ""
-                                return
+                            if equipment_id.isdigit():
+                                equipment_id = equipment_id
                                 
+                                # Check for equipment ID duplicates across both teams
+                                dupe_current = any(p.equipment_id == equipment_id for p in current_team)
+                                dupe_other = any(p.equipment_id == equipment_id for p in other_team)
+                                
+                                if dupe_current or dupe_other:
+                                    print("⚠️ Equipment ID already in use in either team! Please enter a different ID.")
+                                    game_state.input_text = ""
+                                    return
+
                             if game_state.assign_equipment(current_team[game_state.current_index].player_id, equipment_id):
                                 current_team[game_state.current_index].equipment_id = equipment_id
                                 #transmit the equipment id via app_client to generator server
@@ -336,6 +342,7 @@ def handle_event(event, game_state):
                     elif game_state.active_input == "new_codename":
                         if game_state.input_text.strip():
                             codename = game_state.input_text.strip()
+                                
                             if game_state.add_new_player(game_state.current_player_id, codename):
                                 current_team[game_state.current_index].codename = codename
                                 game_state.active_input = "equipment_id"
