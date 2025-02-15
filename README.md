@@ -3,9 +3,9 @@
 | First Header  | Second Header |
 | ------------- | ------------- |
 | MrPersonManGuy  | Thomas Farrell  |
-| Joseph Dumond  | Joseph Dumond  |
+| Joseph-Dumond  | Joseph Dumond  |
 | Jacobghg  | Jacob Giangiulio  |
-| Nrfuhrman  | Nathan Furhman |
+| nrfuhrman  | Nathan Fuhrman |
 | aneigh02  | Alec Neighbors |
 
 # Note 1: We increased the allotted VB memory to 8 GB
