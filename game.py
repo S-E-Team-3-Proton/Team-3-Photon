@@ -30,7 +30,7 @@ def is_valid_ip(ip):
 class Player:
     def __init__(self, player_id="", codename="", equipment_id=None):
         self.player_id = player_id
-        self.codename = codename
+        self.codename = codename 
         self.equipment_id = int(equipment_id) if equipment_id and equipment_id.isdigit() else 0
 
 class GameState:
@@ -69,6 +69,9 @@ class GameState:
         if not player_id.strip().isdigit() or not equipment_id.strip().isdigit():
             return False
         return self.db.set_EquipID(int(player_id), int(equipment_id))
+    
+    def override_player(self, player_id):
+        self.db.remove_EquipID(player_id)
     
     def __del__(self):
         if hasattr(self, 'db'):
@@ -276,9 +279,14 @@ def handle_event(event, game_state):
                     if game_state.active_input == "player_id":
                         if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
                             player_id = game_state.input_text.strip()
+
+                            if current_team[game_state.current_index].equipment_id != 0:
+                                game_state.override_player(current_team[game_state.current_index].player_id)
+
                             game_state.current_player_id = player_id  # Store player_id safely
 
                             codename = game_state.query_codename(player_id)  # Query database for existing codename
+
                             current_team[game_state.current_index].player_id = player_id  # Store in player object
 
                             if codename:
@@ -293,10 +301,10 @@ def handle_event(event, game_state):
                     elif game_state.active_input == "equipment_id":
                         if game_state.input_text.strip().isdigit():
                             equipment_id = game_state.input_text.strip()
-                            #transmit the equipment id via app_client to generator server
-                            app_client.send_message(equipment_id)
                             if game_state.assign_equipment(current_team[game_state.current_index].player_id, equipment_id):
                                 current_team[game_state.current_index].equipment_id = equipment_id
+                                #transmit the equipment id via app_client to generator server
+                                app_client.send_message(equipment_id)
                                 game_state.current_index += 1
                                 game_state.active_input = "player_id"
                             else:

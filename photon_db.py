@@ -68,6 +68,7 @@ class PDB:
             return False
         
         self.equipped_yes[p_id] = e_id
+        print(self.equipped_yes)
         return True
     
     def get_EquipID(self, p_id):
@@ -75,6 +76,9 @@ class PDB:
 
     def reset_EquipID(self):
         self.equipped_yes.clear()
+    
+    def remove_EquipID(self, p_id):
+        del self.equipped_yes[int(p_id)]
 
     #return pla
     def assigned_IDs(self):
