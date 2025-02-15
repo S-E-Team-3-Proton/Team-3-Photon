@@ -68,7 +68,7 @@ class PDB:
             return False
         
         self.equipped_yes[p_id] = e_id
-        print(self.equipped_yes)
+        #print(self.equipped_yes)
         return True
     
     def get_EquipID(self, p_id):
