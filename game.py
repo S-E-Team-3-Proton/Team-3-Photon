@@ -2,6 +2,7 @@ import pygame
 from photon_db import PDB
 from client import UDPClient
 from server import UDPServer
+import ipaddress
 
 # Colors
 BLACK = (0, 0, 0)
@@ -18,6 +19,13 @@ def init_game():
     app_client = UDPClient("127.0.0.1") #default 
     app_server = UDPServer("127.0.0.1") #default
     app_server.start()
+
+def is_valid_ip(ip):
+    try:
+        ipaddress.ip_address(ip) #tries to create an IP object like "192.168.1.1"
+        return True
+    except ValueError:
+        return False
 
 class Player:
     def __init__(self, player_id="", codename="", equipment_id=None):
@@ -327,7 +335,7 @@ def handle_event(event, game_state):
                 # Implement transition to game screen
                 pass
             elif event.key == pygame.K_RETURN:  # Start network address entry
-                if game_state.input_text.strip():
+                if is_valid_ip(game_state.input_text.strip()):
                     new_ip_address = game_state.input_text.strip()
                     app_client.set_network_address(new_ip_address)
                     app_server.set_network_address(new_ip_address)
