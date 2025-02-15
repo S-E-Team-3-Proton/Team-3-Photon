@@ -1,6 +1,6 @@
 # Team-3-Proton
 
-| First Header  | Second Header |
+| Github Users | Names |
 | ------------- | ------------- |
 | MrPersonManGuy  | Thomas Farrell  |
 | Joseph-Dumond  | Joseph Dumond  |
