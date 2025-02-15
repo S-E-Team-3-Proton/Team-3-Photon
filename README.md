@@ -44,13 +44,14 @@ chmod +x install.sh
 ```
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 ## Controls
-- **Arrow Keys**: Navigate between players
+- **Up and Down Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
-- **F1**: Edit game players
+- **RETURN**: Enters the typed information into the cell
+- **F1**: Edit player entry screen
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F3**: Start the game (Not Implemented)
 - **F7**: Create a new game (Not Implemented)
@@ -61,5 +62,6 @@ python main.py
 - Interactive UI with a team selection system
 - Gradient backgrounds and button-based navigation
 - Error handling for database operations
+- Displays Codename of player on the player entry screen after entering information
 
 
