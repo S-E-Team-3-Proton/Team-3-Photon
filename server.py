@@ -16,7 +16,7 @@ class UDPServer:
             self.udp_socket.bind((self.ip, self.port))
             print(f"UDP socket created on {self.ip}:{self.port}") 
         except Exception as e:
-            pass
+            print(f"{e}")
 
         
     def set_network_address(self, ip_In):
