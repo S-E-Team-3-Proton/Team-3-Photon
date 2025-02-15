@@ -50,10 +50,10 @@ python main.py
 ## Controls
 - **Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
-- **F1**: Edit game settings
-- **F2**: Configure game parameters
-- **F3**: Start the game
-- **F7**: Create a new game
+- **F1**: Edit game players
+- **F2**: Configure game parameters (Change Network Address Here)
+- **F3**: Start the game (Not Implemented)
+- **F7**: Create a new game (Not Implemented)
 - **F12**: Clear the current game setup
 
 ## Features
