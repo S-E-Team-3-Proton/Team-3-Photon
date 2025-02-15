@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # install required packages
-pip3 install pygame==2.6.1
-pip3 install psycopg2-binary
+python3 -m pip install pygame==2.6.1
+python3 -m pip install psycopg2-binary
 
 # check versions
 python3 -c "import pygame; print('Pygame version:', pygame.version.ver)"
