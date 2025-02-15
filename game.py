@@ -31,7 +31,7 @@ class GameState:
         self.green_team = [Player() for _ in range(15)]
         self.current_team = "red"  
         self.current_index = 0
-        self.active_input = None
+        self.active_input = "player_id"
         self.input_text = ""
         self.db_connection = None
         self.db = PDB()
@@ -309,9 +309,9 @@ def handle_event(event, game_state):
                     game_state.input_text = game_state.input_text[:-1]
                 else:
                     game_state.input_text += event.unicode
-            elif event.key == pygame.K_RETURN:  # Start new player entry
-                if game_state.current_index < 15:
-                    game_state.active_input = "player_id"
+            # elif event.key == pygame.K_RETURN:  # Start new player entry
+            #     if game_state.current_index < 15:
+            #         game_state.active_input = "player_id"
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
