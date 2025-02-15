@@ -103,14 +103,14 @@ def draw_entry_screen(screen, game_state):
         y_pos = 100 + i * 30
 
         # Shadow effect
-        #pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25), border_radius=6)
-        #pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25), border_radius=6)
-        pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25))
-        pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25))
-        pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25))
-        pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25))
+        pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25), border_radius=6)
+        pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25), border_radius=6)
+        # pygame.draw.rect(screen, (20, 20, 20), (x_red + 3, y_pos + 3, 300, 25))
+        # pygame.draw.rect(screen, (20, 20, 20), (x_green + 3, y_pos + 3, 300, 25))
+        # pygame.draw.rect(screen, RED, (x_red, y_pos, 300, 25))
+        # pygame.draw.rect(screen, GREEN, (x_green, y_pos, 300, 25))
 
         # Display player names
         if game_state.red_team[i].codename:
@@ -126,8 +126,8 @@ def draw_entry_screen(screen, game_state):
         x_pos = 50 if game_state.current_team == "red" else 450
         y_pos = 100 + game_state.current_index * 30  
 
-        #pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3, border_radius=8)
-        pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3)
+        pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3, border_radius=8)
+        # pygame.draw.rect(screen, WHITE, (x_pos - 2, y_pos - 2, 304, 29), 3)
 
      
       
@@ -141,8 +141,8 @@ def draw_entry_screen(screen, game_state):
         else:
             prompt_text = "Enter Data..."
         
-        #pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25), border_radius=6)  # Overwrite slot with black
-        pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25))
+        pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25), border_radius=6)  # Overwrite slot with black
+        # pygame.draw.rect(screen, BLACK, (x_pos, y_pos, 300, 25))
 
 
         # Render the correct prompt
@@ -191,9 +191,9 @@ def draw_parameters_screen(screen, game_state):
     screen.blit(net_option, (SCREEN_WIDTH // 2 - net_option.get_width() // 2, 100))
 
     # Draw rectangle for entering text
-    pygame.draw.rect(screen, (20, 20, 20), (SCREEN_WIDTH // 2 - 150 + 3, 130 + 3, 300, 25))
-    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH // 2 - 150, 130, 304, 29), 3)
-    pygame.draw.rect(screen, BLACK, (SCREEN_WIDTH // 2 -150 + 2 , 130 + 2, 300, 25))
+    pygame.draw.rect(screen, (20, 20, 20), (SCREEN_WIDTH // 2 - 150 + 3, 130 + 3, 300, 25), border_radius=6)
+    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH // 2 - 150, 130, 304, 29), 3, border_radius=6)
+    pygame.draw.rect(screen, BLACK, (SCREEN_WIDTH // 2 -150 + 2 , 130 + 2, 300, 25), border_radius=6)
 
     # Render text prompting in box
     input_surface = FONT.render(game_state.input_text if game_state.input_text else "Enter IP:", True, WHITE)
@@ -220,8 +220,8 @@ def draw_parameters_screen(screen, game_state):
 
 def draw_button(screen, text, x, y):
     button_rect = pygame.Rect(x, y, 180, 40) 
-    #pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
-    pygame.draw.rect(screen, GRAY, button_rect)
+    pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
+    # pygame.draw.rect(screen, GRAY, button_rect)
 
     # Split text into two lines if it's too long
     words = text.split(" ")
