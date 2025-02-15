@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # install pip
-sudo apt-get install python3-pip
+sudo apt install python3-pip
 
 # install required packages
 python3 -m pip install pygame==2.6.1
