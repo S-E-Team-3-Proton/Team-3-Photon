@@ -272,6 +272,10 @@ def handle_event(event, game_state):
                 
 
             elif event.key == pygame.K_RETURN and game_state.active_input:
+                if not game_state.input_text.strip():
+                    return
+
+                
                 current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
                 player = current_team[game_state.current_index]
     
@@ -305,7 +309,7 @@ def handle_event(event, game_state):
                 elif game_state.active_input == "new_codename":
                     if game_state.input_text.strip():
                         codename = game_state.input_text.strip()
-                        if game_state.add_new_player(game_state.current_player_id, codename):
+                        if game_state.add_new_player(player.player_id, codename):
                             player.codename = codename
                             game_state.active_input = "equipment_id"
                         else:
