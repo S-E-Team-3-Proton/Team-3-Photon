@@ -40,6 +40,7 @@ python3 main.py
 - Error handling for database operations
 - Displays Codename of player on the player entry screen after entering information
 - Error handling for incorrect network addresses
+- Overrides and deletes player information in the application when you enter new information in the same cell
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
