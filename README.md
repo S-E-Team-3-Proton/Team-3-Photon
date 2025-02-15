@@ -11,12 +11,31 @@
 # Note 1: We increased the allotted VB memory to 8 GB
 
 ## Running the Game
-To start the game, navigate to the project directory and run:
+To install the necessary packages navigate to the project directory and run:
 
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
+
+If you have problems with the install file, try running the following commands independently instead:
+
+To install pip:
+```bash
+sudo apt install python3-pip
+```
+
+To install psycopg2:
+```bash
+python3 -m pip install psycopg2-binary
+```
+
+To install pygame:
+```bash
+python3 -m pip install pygame==2.6.1
+```
+
+Now to run the application use:
 
 ```bash
 python3 main.py
