@@ -26,6 +26,7 @@ python3 main.py
 - **Up and Down Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
 - **RETURN**: Enters the typed information into the cell
+  - **Note**: You must enter all of a player's information before you can move to change to a different cell
 - **F1**: Edit player entry screen
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F3**: Start the game (Not Implemented)
