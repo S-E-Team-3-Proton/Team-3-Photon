@@ -1,4 +1,13 @@
 # Team-3-Proton
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| MrPersonManGuy  | Thomas Farrell  |
+| Joseph Dumond  | Joseph Dumond  |
+| Jacobghg  | Jacob Giangiulio  |
+| Nrfuhrman  | Nathan Furhman |
+| aneigh02  | Alec Neighbors |
+
 # Note 1: We increased the allotted VB memory to 8 GB
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
