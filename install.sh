@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# install pip
+sudo apt-get update
+sudo apt-get install python3-pip
+
 # install required packages
 python3 -m pip install pygame==2.6.1
 python3 -m pip install psycopg2-binary
