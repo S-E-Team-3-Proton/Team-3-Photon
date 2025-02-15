@@ -276,9 +276,22 @@ def handle_event(event, game_state):
                 if event.key == pygame.K_RETURN:
                     current_team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
 
+                    
                     if game_state.active_input == "player_id":
                         if game_state.input_text.strip().isdigit():  # Ensure player_id is a valid number
                             player_id = game_state.input_text.strip()
+
+                            is_dupe = False
+                            for team in [game_state.red_team, game_state.green_team]:
+                                for p in team:
+                                    if p.player_id == player_id and team.index(p) != game_state.current_index:
+                                        is_dupe = True
+                                        break 
+
+                            if is_dupe:
+                                print("⚠️ Player ID already in use! Please enter a different ID.")
+                                game_state.input_text = ""
+                                return
 
                             if current_team[game_state.current_index].equipment_id != 0:
                                 game_state.override_player(current_team[game_state.current_index].player_id)
