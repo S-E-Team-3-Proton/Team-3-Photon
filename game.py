@@ -32,6 +32,7 @@ class GameState:
         self.current_team = "red"  
         self.current_index = 0
         self.active_input = "player_id"
+        self.previous_inpput = None
         self.input_text = ""
         self.db_connection = None
         self.db = PDB()
@@ -249,13 +250,14 @@ def handle_event(event, game_state):
                 game_state.red_team = [Player() for _ in range(15)]
                 game_state.green_team = [Player() for _ in range(15)]
                 game_state.current_index = 0
-                game_state.active_input = None
+                game_state.active_input = "player_id"
                 game_state.db.reset_EquipID()
             elif event.key == pygame.K_F3:  # Start game
                 # Implement transition to game screen
                 pass
             elif event.key == pygame.K_F2: # Switch to game parameters screen (change network address here)
                 game_state.active_view = "parameters"
+                game_state.previous_input = game_state.active_input
                 game_state.active_input = "ip_address"
             elif event.key == pygame.K_TAB and game_state.active_input == "player_id":  # Switch teams
                 game_state.current_team = "green" if game_state.current_team == "red" else "red"
@@ -310,6 +312,8 @@ def handle_event(event, game_state):
                     game_state.input_text = game_state.input_text[:-1]
                 elif event.key == pygame.K_TAB and game_state.active_input == "new_codename":
                     return
+                elif event.key == pygame.K_TAB and game_state.active_input == "equipment_id":
+                    return
                 else:
                     game_state.input_text += event.unicode
             # elif event.key == pygame.K_RETURN:  # Start new player entry
@@ -318,7 +322,7 @@ def handle_event(event, game_state):
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
-                game_state.active_input = "player_id"
+                game_state.active_input = game_state.previous_input
             elif event.key == pygame.K_F3:  # Start game
                 # Implement transition to game screen
                 pass

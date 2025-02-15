@@ -11,9 +11,12 @@ class UDPServer:
         self.bind_server()  
 
     def bind_server(self):
-        self.udp_socket.bind((self.ip, self.port))
-        print(f"UDP socket created on {self.ip}:{self.port}")  
-
+        try:
+            self.udp_socket.bind((self.ip, self.port))
+            print(f"UDP socket created on {self.ip}:{self.port}") 
+        except Exception as e:
+            pass
+        
     def set_network_address(self, ip_In):
         """Stops the current server and restarts it with a new IP address."""
         self.stop()  
@@ -39,8 +42,8 @@ class UDPServer:
                 print(f"Message from Client: {message.decode()}")
                 print(f"Client IP Address: {address}")
 
-            except OSError:
-                print("Server socket closed.")
+            except Exception as e:
+                print(f"Server socket closed. {e}")
                 break  
 
     def stop(self): #stops the server running and closes the socket
