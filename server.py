@@ -52,4 +52,5 @@ class UDPServer:
         if self.running:
             self.running = False
             self.udp_socket.close()
+            self.udp_socket = None
             print("UDP server has been stopped")
