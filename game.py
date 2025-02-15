@@ -308,6 +308,8 @@ def handle_event(event, game_state):
                     game_state.input_text = ""  # Clear input box
                 elif event.key == pygame.K_BACKSPACE:
                     game_state.input_text = game_state.input_text[:-1]
+                elif event.key == pygame.K_TAB and game_state.active_input == "new_codename":
+                    return
                 else:
                     game_state.input_text += event.unicode
             # elif event.key == pygame.K_RETURN:  # Start new player entry
