@@ -48,7 +48,7 @@ python3 main.py
   - **Note**: You must enter all of a player's information before you can move to change to a different cell
 - **F1**: Edit player entry screen
 - **F2**: Configure game parameters (Change Network Address Here)
-- **F3**: Start the game (Not Implemented)
+- **F3**: Start the game
 - **F7**: Create a new game (Not Implemented)
 - **F12**: Clear the current game setup
 
