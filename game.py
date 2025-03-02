@@ -46,6 +46,7 @@ class GameState:
         self.db = PDB()
         self.connect_to_db()
         self.active_view = "entry"
+        self.started_game = False
 
     def connect_to_db(self):
         if not self.db.connect():
@@ -82,6 +83,8 @@ def draw_view(screen, game_state):
         draw_entry_screen(screen, game_state)
     elif game_state.active_view == "parameters":
         draw_parameters_screen(screen, game_state)
+    elif game_state.active_view == "game":
+        draw_game_screen(screen, game_state)
 
 def draw_entry_screen(screen, game_state):
     # gradient background
@@ -179,7 +182,7 @@ def draw_entry_screen(screen, game_state):
     # draw buttons centered in team area
     draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
     draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
-    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F12 - Clear Game", start_x + 4 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
 
@@ -226,9 +229,35 @@ def draw_parameters_screen(screen, game_state):
     # draw buttons centered in team area at the bottom of the screen
     draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
     draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
-    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     
+def draw_game_screen(screen, game_state):
+    # !!! IMPLEMENT GAME PLAY ACTION DISPLAY AND STARTING COUNTDOWN TIMER IN THIS FUNCTION !!!
+    # !!! USE game_state.started_game = True AFTER THE COUNTDOWN SEQUENCE IS DONE !!!
+
+    # gradient background
+    SCREEN_HEIGHT = screen.get_height()
+    SCREEN_WIDTH = screen.get_width()
+    for i in range(SCREEN_HEIGHT):
+        pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
+
+    # !!! PUT LOGIC FOR COUNTDOWN TIMER AND PLAY ACTION DISPLAY HERE !!!
+    # !!! game_state.started_game should be used to differentiate between the countdown and the play action display !!!
+
+    # Calculate button from Red Team start to Green Team end
+    button_area_start = SCREEN_WIDTH // 4 - 150  # Left boundary 
+
+    # calculate button centering
+    button_width = 90
+    button_spacing = 40  # Space between buttons
+    start_x = button_area_start
+
+    # draw buttons centered in team area at the bottom of the screen
+    draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
 
 def draw_button(screen, text, x, y):
     button_rect = pygame.Rect(x, y, 180, 40) 
@@ -263,9 +292,11 @@ def handle_event(event, game_state):
                 game_state.current_index = 0
                 game_state.active_input = "player_id"
                 game_state.db.reset_EquipID()
-            elif event.key == pygame.K_F3:  # Start game
-                # Implement transition to game screen
-                pass
+            elif event.key == pygame.K_F5:  # Start game
+                # NOTE ANY CHANGES HERE MUST BE REFLECTED FOR THE PARAMETERS SCREEN AS WELL
+                game_state.active_view = "game"
+                game_state.previous_input = game_state.active_input
+                # game_state.active_input = SOMETHING!!!
             elif event.key == pygame.K_F2: # Switch to game parameters screen (change network address here)
                 game_state.active_view = "parameters"
                 game_state.previous_input = game_state.active_input
@@ -360,16 +391,14 @@ def handle_event(event, game_state):
                     return
                 else:
                     game_state.input_text += event.unicode
-            # elif event.key == pygame.K_RETURN:  # Start new player entry
-            #     if game_state.current_index < 15:
-            #         game_state.active_input = "player_id"
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
                 game_state.active_input = game_state.previous_input
-            elif event.key == pygame.K_F3:  # Start game
-                # Implement transition to game screen
-                pass
+            elif event.key == pygame.K_F5:  # Start game
+                # NOTE ANY CHANGES HERE MUST BE REFLECTED FOR THE EDIT GAME SCREEN AS WELL
+                game_state.active_view = "game"
+                # game_state.active_input = SOMETHING!!!
             elif event.key == pygame.K_RETURN:  # Start network address entry
                 if is_valid_ip(game_state.input_text.strip()):
                     new_ip_address = game_state.input_text.strip()
@@ -383,3 +412,10 @@ def handle_event(event, game_state):
                 game_state.input_text = game_state.input_text[:-1]
             else:
                 game_state.input_text += event.unicode
+        elif game_state.active_view == "game":
+            if event.key == pygame.K_F1:  # Change to edit game
+                game_state.active_view = "entry"
+                game_state.active_input = game_state.previous_input
+            elif event.key == pygame.K_F2:   # Change to parameters screen
+                game_state.active_view = "parameters"
+                game_state.active_input = "ip_address"
