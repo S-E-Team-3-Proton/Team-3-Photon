@@ -1,0 +1,187 @@
+import pygame
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+GRAY = (128, 128, 128)
+
+FONT = None
+TITLE_FONT = None
+BUTTON_FONT = None
+
+def font_init(font, titlefont, button_font):
+    global FONT, TITLE_FONT, BUTTON_FONT
+    FONT = font
+    TITLE_FONT = titlefont
+    BUTTON_FONT = button_font
+
+def draw_view(screen, game_state):
+    if game_state.active_view == "entry":
+        draw_entry_screen(screen, game_state)
+    elif game_state.active_view == "parameters":
+        draw_parameters_screen(screen, game_state)
+    elif game_state.active_view == "game":
+        draw_game_screen(screen, game_state)
+
+
+def draw_entry_screen(screen, game_state):
+    # gradient background
+    SCREEN_HEIGHT = screen.get_height()
+    SCREEN_WIDTH = screen.get_width()
+    for i in range(SCREEN_HEIGHT):
+        pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
+
+    # Draw title with shadow
+    title_shadow = TITLE_FONT.render("Edit Current Game", True, (50, 50, 50))
+    screen.blit(title_shadow, (SCREEN_WIDTH // 2 - title_shadow.get_width() // 2 + 2, 22))
+    title = TITLE_FONT.render("Edit Current Game", True, WHITE)
+    screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 20))
+    
+    # Draw team headers
+    red_header = TITLE_FONT.render("RED TEAM", True, RED)
+    green_header = TITLE_FONT.render("GREEN TEAM", True, GREEN)
+    # Center team headers dynamically
+    red_header_x = SCREEN_WIDTH // 4 - red_header.get_width() // 2
+    green_header_x = SCREEN_WIDTH * 3 // 4 - green_header.get_width() // 2
+
+
+    screen.blit(red_header, (red_header_x, 60))
+    screen.blit(green_header, (green_header_x, 60))
+
+
+    field_names = ["p_id","e_id","name"]
+    f_widths=[60,60,180]
+
+    x_redP = SCREEN_WIDTH // 4 - sum(f_widths) // 2
+    x_greenP = SCREEN_WIDTH * 3 // 4 - sum(f_widths) // 2
+
+    for i, field in enumerate(field_names):
+        x_red = x_redP + sum(f_widths[:i])
+        x_green = x_greenP + sum(f_widths[:i])
+
+        field_header= FONT.render(field, True, WHITE)
+        screen.blit(field_header, (x_red+(f_widths[i] - field_header.get_width())//2, 85))
+        screen.blit(field_header, (x_green+(f_widths[i] - field_header.get_width())//2, 85))
+
+    
+    # Draw player slots with rounded corners & shadow
+    for i in range(15):
+        y_pos = 100 + i * 30
+        draw_playerInfo(screen, game_state, game_state.red_team[i], x_redP, y_pos, f_widths, "red", i)
+        draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, "green", i)
+
+    button_area_start = x_redP  # Left boundary (Red Team start)
+    # calculate button centering
+    button_width = 90
+    button_spacing = 40  # Space between buttons
+    start_x = button_area_start
+
+
+    # draw buttons centered in team area
+    draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F12 - Clear Game", start_x + 4 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+
+
+def draw_playerInfo(screen, game_state, player, x, y, f_widths, team, index):
+    field_vals = [str(player.player_id) if player.player_id else "", str(player.equipment_id) if player.equipment_id else "",
+        player.codename if player.codename else ""]
+    
+    field_names = ["p_id","e_id","name"]
+    fieldColor = RED if team == "red" else GREEN
+
+    for i, val in enumerate(field_vals):
+        x_pos = x + sum(f_widths[:i])
+        f_width = f_widths[i]
+
+        pygame.draw.rect(screen, (20,20,20), (x_pos + 3, y + 3, f_width, 25), border_radius=6)
+        pygame.draw.rect(screen, fieldColor, (x_pos, y, f_width, 25), border_radius=6)
+
+        active = (game_state.current_team == team
+                  and game_state.current_index == index
+                  and game_state.active_input == field_names[i]
+                )
+        
+        if active:
+            pygame.draw.rect(screen, WHITE, (x_pos - 2, y - 2, f_width + 4, 29),3, border_radius=8)
+            pygame.draw.rect(screen, BLACK, (x_pos, y, f_width, 25),3, border_radius=6)
+
+            textInsert = game_state.input_text if game_state.input_text else F"Enter {field_names[i]}"
+            text_S = FONT.render(textInsert, True, WHITE)
+        else:
+            text_S = FONT.render(val, True, WHITE)
+
+        if i < 2:
+            textXPos = x_pos + (f_width-text_S.get_width()) // 2
+        else:
+            textXPos = x_pos + 5
+
+        screen.blit(text_S,(textXPos, y + 5))
+
+
+def draw_parameters_screen(screen, game_state):
+    # gradient background
+    SCREEN_HEIGHT = screen.get_height()
+    SCREEN_WIDTH = screen.get_width()
+    for i in range(SCREEN_HEIGHT):
+        pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
+
+    # Draw title with shadow
+    title_shadow = TITLE_FONT.render("Edit Game Parameters", True, (50, 50, 50))
+    screen.blit(title_shadow, (SCREEN_WIDTH // 2 - title_shadow.get_width() // 2 + 2, 22))
+    title = TITLE_FONT.render("Edit Game Parameters", True, WHITE)
+    screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 20))
+
+    # Draw network address change text
+    net_option_shadow = FONT.render("Change Network Address", True, (50, 50, 50))
+    screen.blit(net_option_shadow, (SCREEN_WIDTH // 2 - net_option_shadow.get_width() // 2 + 2, 102))
+    net_option = FONT.render("Change Network Address", True, WHITE)
+    screen.blit(net_option, (SCREEN_WIDTH // 2 - net_option.get_width() // 2, 100))
+
+    # Draw rectangle for entering text
+    pygame.draw.rect(screen, (20, 20, 20), (SCREEN_WIDTH // 2 - 150 + 3, 130 + 3, 300, 25), border_radius=6)
+    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH // 2 - 150, 130, 304, 29), 3, border_radius=6)
+    pygame.draw.rect(screen, BLACK, (SCREEN_WIDTH // 2 -150 + 2 , 130 + 2, 300, 25), border_radius=6)
+
+    # Render text prompting in box
+    input_surface = FONT.render(game_state.input_text if game_state.input_text else "Enter IP:", True, WHITE)
+    screen.blit(input_surface, (SCREEN_WIDTH // 2 -150 + 2 + 5, 130 + 5))
+
+    # Calculate button from Red Team start to Green Team end
+    button_area_start = SCREEN_WIDTH // 4 - 150  # Left boundary 
+    #button_area_end = SCREEN_WIDTH * 3 // 4 - 150 + 300  # Right boundary
+    #button_area_width = button_area_end - button_area_start  # Total width
+
+    # calculate button centering
+    button_width = 90
+    button_spacing = 40  # Space between buttons
+    #total_button_width = 5 * button_width + 4 * button_spacing  # Total width of all buttons
+    #start_x = button_area_start + (button_area_width - total_button_width) // 2  # Center within team area
+    start_x = button_area_start
+
+    # draw buttons centered in team area at the bottom of the screen
+    draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    
+def draw_button(screen, text, x, y):
+    button_rect = pygame.Rect(x, y, 180, 40) 
+    pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
+    # pygame.draw.rect(screen, GRAY, button_rect)
+
+    # Split text into two lines if it's too long
+    words = text.split(" ")
+    if len(words) > 2:  # If text is too long, break into two lines
+        first_line = " ".join(words[:2])
+        second_line = " ".join(words[2:])
+        button_text1 = BUTTON_FONT.render(first_line, True, WHITE)
+        button_text2 = BUTTON_FONT.render(second_line, True, WHITE)
+        screen.blit(button_text1, (x + 10, y + 5))
+        screen.blit(button_text2, (x + 10, y + 25))
+    else:
+        button_text = BUTTON_FONT.render(text, True, WHITE)
+        screen.blit(button_text, (x + 10, y + 15))  # Centered vertically
