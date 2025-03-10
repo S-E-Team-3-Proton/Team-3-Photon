@@ -1,6 +1,7 @@
 import pygame
 from game import init_game, GameState, draw_view, handle_event
-
+from render import draw_view
+from event_handler import handle_event
 
 def main():
 
@@ -14,21 +15,26 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Laser Tag Game")
 
-    photon_logo = pygame.image.load("logo.jpg")
-    photon_logo = pygame.transform.scale(photon_logo, (SCREEN_WIDTH, SCREEN_HEIGHT))
-    screen.blit(photon_logo, (0, 0))
-    pygame.display.update()
-    pygame.time.wait(3000)  # Display splash screen for 3 seconds
+    try:
+        photon_logo = pygame.image.load("logo.jpg")
+        photon_logo = pygame.transform.scale(photon_logo, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(photon_logo, (0, 0))
+        pygame.display.update()
+        pygame.time.wait(3000)  # Display splash screen for 3 seconds
+    except:
+        print(Couldn't load splash screen")
     
     # Initialize game state
     game_state = GameState()
+    app_client = get_app_client()
+    app_server = get_app_server()
     
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            handle_event(event, game_state)
+            handle_event(event, game_state, app_client, app_server)
         
         draw_view(screen, game_state)
         pygame.display.update()
