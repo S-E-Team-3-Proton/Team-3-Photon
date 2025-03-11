@@ -31,16 +31,26 @@ def main():
 
     clock = pygame.time.Clock()
     running = True
+    last_update_time = pygame.time.get_ticks()
+    
     while running:
+
+        current_time = pygame.time.get_ticks()
+        dt = current_time - last_update_time
+        last_update_time = current_time
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            handle_event(event, game_state, app_client, app_server)
+            handle_event(event, game_state, app_client,app_server)
         
+        if game_state.active_view == "game":
+            game_state.gameUpdate(app_client)
+
         draw_view(screen, game_state)
         pygame.display.update()
-        clock.tick()
-    
+        clock.tick(60)
+        
     if game_state.db_connection:
         game_state.db_connection.close()
     pygame.quit()
