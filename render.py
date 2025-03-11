@@ -185,3 +185,91 @@ def draw_button(screen, text, x, y):
     else:
         button_text = BUTTON_FONT.render(text, True, WHITE)
         screen.blit(button_text, (x + 10, y + 15))  # Centered vertically
+def draw_game_screen(screen, game_state):
+    SCREEN_HEIGHT = screen.get_height()
+    SCREEN_WIDTH = screen.get_width()
+    for i in range(SCREEN_HEIGHT):
+        pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
+    
+    title_shadow = TITLE_FONT.render("Game Action Screen", True, (50, 50, 50))
+    screen.blit(title_shadow, (SCREEN_WIDTH // 2 - title_shadow.get_width() // 2 + 2, 22))
+    title = TITLE_FONT.render("Game Action Screen", True, WHITE)
+    screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 20))
+
+    red_score = sum(player.score for player in game_state.red_team if hasattr(player, 'score'))
+    green_score = sum(player.score for player in game_state.green_team if hasattr(player, 'score'))
+
+    flash_color = RED if red_score > green_score else GREEN if green_score > red_score else WHITE
+    if game_state.timer % 30 < 15 and (red_score != green_score):
+        flash_color = WHITE
+
+    red_header = TITLE_FONT.render("RED TEAM", True, flash_color if red_score > green_score else RED)
+    red_score_text = TITLE_FONT.render(str(red_score), True, flash_color if red_score > green_score else RED)
+    screen.blit(red_header, (SCREEN_WIDTH // 4 - red_header.get_width() // 2, 60))
+    screen.blit(red_score_text, (SCREEN_WIDTH // 4 - red_score_text.get_width() // 2, 90))
+
+    GREEN_header = TITLE_FONT.render("GREEN TEAM", True, flash_color if green_score > green_score else GREEN)
+    GREEN_score_text = TITLE_FONT.render(str(green_score), True, flash_color if green_score > green_score else GREEN)
+    screen.blit(GREEN_header, (SCREEN_WIDTH *3// 4 - GREEN_header.get_width() // 2, 60))
+    screen.blit(GREEN_score_text, (SCREEN_WIDTH *3// 4 - GREEN_score_text.get_width() // 2, 90))
+
+    pygame.draw.rect(screen, (0,0,100), (SCREEN_WIDTH // 2 - 150, 130, 500, 200), border_radius=10)
+    pygame.draw.rect(screen, (0,0,150), (SCREEN_WIDTH // 2 - 150, 130, 500, 30), border_radius=10)
+    event_head = FONT.render("Current Actions", True, WHITE)
+    screen.blit(event_head,(SCREEN_WIDTH//2 - event_head.get_width()//2, 135))
+
+    yoffset = 165
+    for event in game_state.game_events[-8:]:
+        etext = FONT.render(event, True, WHITE)
+        screen.blit(etext, (SCREEN_WIDTH // 2 - 240, yoffset))
+        yoffset += 20
+
+    drawScores(screen, game_state.red_team, SCREEN_WIDTH//4 -125, 350, RED)
+    drawScores(screen, game_state.green_team, SCREEN_WIDTH*3//4 -125, 350, GREEN)
+
+    minutes = game_state.timer // 3600
+    seconds = (game_state.timer // 60) % 60
+    timer_text = f"Time Remaining: {minutes:01d}:{seconds:02d}"
+
+    timer_bckg = TITLE_FONT.render(timer_text, True, WHITE)
+    screen.blit(timer_bckg, (SCREEN_WIDTH // 2 - timer_bckg.get_width() // 2, SCREEN_HEIGHT - 60))
+
+    if game_state.gameOver:
+        draw_button(screen, "Back to Menu", SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT - 100)
+
+def drawScores(screen, team, x, y, color):
+    valid_players = []
+    for player in team:
+        if hasattr(player, 'score') and player.player_id:
+            valid_players.append(player)
+            
+    playersByScore = sorted(valid_players, key=lambda p: p.score, reverse=True)
+    
+    pygame.draw.rect(screen, color, (x, y, 250, 30), border_radius=6)
+    header = FONT.render("Player Scores", True, WHITE)
+    screen.blit(header, (x + 125 - header.get_width() // 2, y + 5))
+
+    backgrColor = (30,30,30)
+    yoffset= y+35
+
+    for i, player in enumerate(playersByScore):
+        if player.player_id:
+            pygame.draw.rect(screen, backgrColor, (x,yoffset,250,25), border_radius=4)
+
+            p_name = f"{player.codename}"
+            p_score = getattr(player,'score',0)
+
+            name_bckg = FONT.render(p_name, True, WHITE)
+            score_bckg = FONT.render(str(p_score), True, WHITE)
+            
+            screen.blit(name_bckg, (x + 10, yoffset + 5))
+            screen.blit(score_bckg, (x + 240 - score_bckg.get_width(), yoffset + 5))
+            
+            yoffset += 30
+            
+            # Only show top 8 players to fit on screen
+            if i >= 7:
+                break
+
+
+    
