@@ -19,23 +19,32 @@ def handle_event(event, game_state, app_client, app_server):
                 game_state.active_input = "p_id"
                 game_state.input_text = ""
                 game_state.db.reset_EquipID()
-            elif event.key == pygame.K_F3:  # Start game
-                # Implement transition to game screen
-                pass
+            elif event.key == pygame.K_F5:  # Start game
+                red_has_player = any(player.player_id for player in game_state.red_team)
+                green_has_player = any(player.player_id for player in game_state.green_team)
+                
+                if red_has_player and green_has_player:
+                    game_state.gameStart(app_client)
+                else:
+                    print("Need at least one player on each team to start the game")
             elif event.key == pygame.K_F2: # Switch to game parameters screen (change network address here)
                 game_state.active_view = "parameters"
                 game_state.previous_input = game_state.active_input
                 game_state.active_input = "ip_address"
             else:
-                #handle 1
                 handleInfo(event, game_state, app_client)
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
                 game_state.active_input = game_state.previous_input or "player_id"
-            elif event.key == pygame.K_F3:  # Start game
-                # Implement transition to game screen
-                pass
+            elif event.key == pygame.K_F5:  # Start game
+                red_has_player = any(player.player_id for player in game_state.red_team)
+                green_has_player = any(player.player_id for player in game_state.green_team)
+                
+                if red_has_player and green_has_player:
+                    game_state.gameStart(app_client)
+                else:
+                    print("Need at least one player on each team to start the game")
             elif event.key == pygame.K_RETURN:  # Start network address entry
                 if is_valid_ip(game_state.input_text.strip()):
                     new_ip_address = game_state.input_text.strip()
@@ -49,10 +58,12 @@ def handle_event(event, game_state, app_client, app_server):
                 game_state.input_text = game_state.input_text[:-1]
             else:
                 game_state.input_text += event.unicode
-        elif game_state.active_view == "game":
+        elif game_state.active_view == "game" and game_state.gameOver:
             if event.key == pygame.K_F1:
                 game_state.active_view = "entry"
-                game_state.active_input = "player_id"
+                game_state.running = False
+                game_state.gameOver = False
+                game_state.active_input = "p_id"
         
 def handleInfo(event, game_state, app_client):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
