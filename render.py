@@ -1,4 +1,5 @@
 import pygame
+import math
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -81,7 +82,7 @@ def draw_entry_screen(screen, game_state):
     # draw buttons centered in team area
     draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
     draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
-    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F12 - Clear Game", start_x + 4 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
 
@@ -185,6 +186,7 @@ def draw_button(screen, text, x, y):
     else:
         button_text = BUTTON_FONT.render(text, True, WHITE)
         screen.blit(button_text, (x + 10, y + 15))  # Centered vertically
+
 def draw_game_screen(screen, game_state):
     SCREEN_HEIGHT = screen.get_height()
     SCREEN_WIDTH = screen.get_width()
@@ -227,12 +229,18 @@ def draw_game_screen(screen, game_state):
     drawScores(screen, game_state.red_team, SCREEN_WIDTH//4 -125, 350, RED)
     drawScores(screen, game_state.green_team, SCREEN_WIDTH*3//4 -125, 350, GREEN)
 
-    minutes = game_state.timer // 3600
-    seconds = (game_state.timer // 60) % 60
-    timer_text = f"Time Remaining: {minutes:01d}:{seconds:02d}"
-
-    timer_bckg = TITLE_FONT.render(timer_text, True, WHITE)
-    screen.blit(timer_bckg, (SCREEN_WIDTH // 2 - timer_bckg.get_width() // 2, SCREEN_HEIGHT - 60))
+    if game_state.counting:
+        timer_text = f"Starting in: {int(game_state.countDown)} seconds"
+    else:
+        try:
+            minutes = int(game_state.timer) // 60
+            seconds = int(game_state.timer) % 60
+            timer_text = f"Time Remaining: {minutes:01d}:{seconds:02d}"
+        except Exception as e:
+            timer_text = "Time Remaining: 6:00"
+    
+    timer_display = TITLE_FONT.render(timer_text, True, WHITE)
+    screen.blit(timer_display, (SCREEN_WIDTH // 2 - timer_display.get_width() // 2, SCREEN_HEIGHT - 60))
 
     if game_state.gameOver:
         draw_button(screen, "Back to Menu", SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT - 100)
@@ -270,6 +278,3 @@ def drawScores(screen, team, x, y, color):
             # Only show top 8 players to fit on screen
             if i >= 7:
                 break
-
-
-    
