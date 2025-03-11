@@ -109,41 +109,55 @@ class GameState:
         if hasattr(self, 'db'):
             self.db.disconnect()
 
+
     def gameStart(self, app_client):
         self.active_view = "game"
         self.game_events = []
         self.counting = True
-        self.countDown = 30
+        self.running = False
+        self.gameOver = False
+
+        self.countDown = 30.0
+    
+        fps = 60.0
+        self.timer = 6.0 * 60 +.99
 
         for team in [self.red_team, self.green_team]:
             for player in team:
                 player.score = 0
 
+        self.add_game_event("Game countdown started...")
+
     def gameUpdate(self, app_client):
+        fps =60
         if self.counting:
+            self.countDown -= 1 /fps
             if self.countDown <= 0:
                 self.counting = False
                 self.running = True
-                app_client.send_message('202')
-            elif self.countdown_seconds % 10 == 0:
-                self.add_event(f"Game starts in {self.countdown_seconds} seconds...")
-            self.countDown -= 1/60
+            elif int(self.countDown) % 10 == 0 and abs(self.countDown - int(self.countDown)) < 0.01:
+                self.add_game_event(f"Game starts in {int(self.countDown)} seconds...")
         elif self.running:
-            self.timer -= 1
-            if self.timer <= 0:
-                self.running = False
-                self.gameOver = True
+            try:
+                self.timer -= 1/fps
+                if self.timer <= 0:
+                    self.running = False
+                    self.gameOver = True
 
-                for _ in range(3):
-                    app_client.send_message('221')
+                    for _ in range(3):
+                        app_client.send_message('221')
 
-            elif self.timer == 30*60:
-                self.add_event("30 Seconds Left")
+                elif self.timer <= 30 * fps and self.timer > (30 * fps - fps):
+                    self.add_game_event("30 Seconds Left!")
+            except:
+                self.timer = 6.0*60
+        
 
     def add_game_event(self, eventmsg):
         self.game_events.append(eventmsg)
         if len(self.game_events) > 50:
             self.game_events.pop(0)
+
 
 def get_app_client():
     return app_client
