@@ -28,7 +28,8 @@ def main():
     game_state = GameState()
     app_client = get_app_client()
     app_server = get_app_server()
-    
+
+    clock = pygame.time.Clock()
     running = True
     while running:
         for event in pygame.event.get():
@@ -38,6 +39,7 @@ def main():
         
         draw_view(screen, game_state)
         pygame.display.update()
+        clock.tick()
     
     if game_state.db_connection:
         game_state.db_connection.close()
