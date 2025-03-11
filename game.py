@@ -47,6 +47,17 @@ class GameState:
         self.connect_to_db()
         self.active_view = "entry"
 
+        self.running = False
+        self.gameOver = False
+        self.game_events = []
+        self.timer = 6*60*60
+        self.counting = False
+        self.countDown = 30
+
+        for team in [self.red_team, self.green_team]:
+            for player in team:
+                player.score = 0
+
     def connect_to_db(self):
         if not self.db.connect():
             print("Failed to connect to database")
@@ -97,6 +108,42 @@ class GameState:
     def __del__(self):
         if hasattr(self, 'db'):
             self.db.disconnect()
+
+    def gameStart(self, app_client):
+        self.active_view = "game"
+        self.game_events = []
+        self.counting = True
+        self.countDown = 30
+
+        for team in [self.red_team, self.green_team]:
+            for player in team:
+                player.score = 0
+
+    def gameUpdate(self, app_client):
+        if self.counting:
+            if self.countDown <= 0:
+                self.counting = False
+                self.running = True
+                app_client.send_message('202')
+            elif self.countdown_seconds % 10 == 0:
+                self.add_event(f"Game starts in {self.countdown_seconds} seconds...")
+            self.countDown -= 1/60
+        elif self.running:
+            self.timer -= 1
+            if self.timer <= 0:
+                self.running = False
+                self.gameOver = True
+
+                for _ in range(3):
+                    app_client.send_message('221')
+
+            elif self.timer == 30*60:
+                self.add_event("30 Seconds Left")
+
+    def add_game_event(self, eventmsg):
+        self.game_events.append(eventmsg)
+        if len(self.game_events) > 50:
+            self.game_events.pop(0)
 
 def get_app_client():
     return app_client
