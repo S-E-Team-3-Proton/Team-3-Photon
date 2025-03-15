@@ -51,7 +51,7 @@ def draw_entry_screen(screen, game_state):
     screen.blit(green_header, (green_header_x, 60))
 
 
-    field_names = ["p_id","e_id","name"]
+    field_names = ["P_ID","E_ID","Name"]
     f_widths=[60,60,180]
 
     x_redP = SCREEN_WIDTH // 4 - sum(f_widths) // 2
