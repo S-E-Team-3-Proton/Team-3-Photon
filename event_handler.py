@@ -76,9 +76,9 @@ def handle_event(event, game_state, app_client, app_server):
             elif event.key == pygame.K_BACKSPACE:
                 game_state.input_text = game_state.input_text[:-1]
             elif event.key == pygame.K_ESCAPE:
-                game_state.active_view ='entry'
+                game_state.active_view = 'entry'
                 game_state.active_input = game_state.previous_input or 'p_id'
-                game_state.input_text= ''
+                game_state.input_text = ''
             else:
                 try:
                     char = event.unicode
@@ -106,7 +106,7 @@ def handleInfo(event, game_state, app_client):
             
             player_exist = False
             for i, player in enumerate(team):
-                if player.player_id == player_id and i!= game_state.current_index:
+                if player.player_id == player_id and i! = game_state.current_index:
                     player_exist = True
                     break
 
