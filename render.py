@@ -4,7 +4,7 @@ import math
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-GREEN = (0, 255, 0)
+GREEN = (0, 127, 0)
 GRAY = (128, 128, 128)
 
 FONT = None
@@ -235,8 +235,10 @@ def draw_game_screen(screen, game_state):
     screen.blit(GREEN_header, (SCREEN_WIDTH *3// 4 - GREEN_header.get_width() // 2, 60))
     screen.blit(GREEN_score_text, (SCREEN_WIDTH *3// 4 - GREEN_score_text.get_width() // 2, 90))
 
-    pygame.draw.rect(screen, (0,0,100), (SCREEN_WIDTH // 2 - 150, 130, 500, 200), border_radius=10)
-    pygame.draw.rect(screen, (0,0,150), (SCREEN_WIDTH // 2 - 150, 130, 500, 30), border_radius=10)
+    p_width = SCREEN_WIDTH - 100
+    centrPoint = (SCREEN_WIDTH - p_width) // 2
+    pygame.draw.rect(screen, (0,0,100), (centrPoint, 130, p_width, 200), border_radius=10)
+    pygame.draw.rect(screen, (0,0,150), (centrPoint, 130, p_width, 30), border_radius=10)
     event_head = FONT.render("Current Actions", True, WHITE)
     screen.blit(event_head,(SCREEN_WIDTH//2 - event_head.get_width()//2, 135))
 
