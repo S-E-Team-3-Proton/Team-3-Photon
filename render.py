@@ -86,10 +86,11 @@ def draw_entry_screen(screen, game_state):
 
 
     # calculate button centering
-    button_width = 90
-    button_spacing = 40  # Space between buttons
-    button_area_start = SCREEN_WIDTH // 2 - (button_width * 2 + button_spacing * 1.5)
-    start_x = button_area_start
+    button_width = 180
+    button_spacing = 20  # Space between buttons
+    total_buttons = 5
+    total_width = button_width * total_buttons + button_spacing * (total_buttons - 1)
+    start_x = SCREEN_WIDTH // 2 - total_width // 2  # Center all buttons
 
 
     # draw buttons centered in team area
@@ -107,7 +108,7 @@ def draw_playerInfo(screen, game_state, player, x, y, f_widths, spacing, team, i
         player.codename if player.codename else ""
     ]
     
-    field_names = ["p_id","e_id","name"]
+    field_names = ["P_id","E_id","Name"]
     fieldColor = RED if team == "red" else GREEN
 
     for i, val in enumerate(field_vals):
@@ -176,16 +177,15 @@ def draw_parameters_screen(screen, game_state):
     #button_area_width = button_area_end - button_area_start  # Total width
 
     # calculate button centering
-    button_width = 90
-    button_spacing = 40  # Space between buttons
-    button_area_start = SCREEN_WIDTH // 2 - (button_width * 2 + button_spacing * 1.5)
-    #total_button_width = 5 * button_width + 4 * button_spacing  # Total width of all buttons
-    #start_x = button_area_start + (button_area_width - total_button_width) // 2  # Center within team area
-    start_x = button_area_start
+    button_width = 180
+    button_spacing = 20  # Space between buttons
+    total_buttons = 4
+    total_width = button_width * total_buttons + button_spacing * (total_buttons - 1)
+    start_x = SCREEN_WIDTH // 2 - total_width // 2  # Center all buttons
 
-    # draw buttons centered in team area at the bottom of the screen
+    # draw buttons centered at the bottom of the screen
     draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
-    draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
+    draw_button(screen, "F2 - Game Parameters", start_x + (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     
