@@ -52,7 +52,7 @@ def draw_entry_screen(screen, game_state):
 
 
     field_names = ["p_id","e_id","name"]
-    f_widths=[70,70,190] # width of the box
+    f_widths=[100,100,150] # width of the box
     spacing = 10 # space between boxes
 
     total_width = sum(f_widths) + spacing * 2 # spacing between three boxes.
@@ -80,7 +80,7 @@ def draw_entry_screen(screen, game_state):
     
     # Draw player slots with rounded corners & shadow
     for i in range(15):
-        y_pos = 100 + i * 30
+        y_pos = 110 + i * 30
         draw_playerInfo(screen, game_state, game_state.red_team[i], x_redP, y_pos, f_widths, spacing, "red", i)
         draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, spacing, "green", i)
 
