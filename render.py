@@ -72,8 +72,8 @@ def draw_entry_screen(screen, game_state):
             x_green += f_widths[j] + spacing
             
         field_header = FONT.render(field, True, WHITE)
-        screen.blit(field_header, (x_red + (f_widths[i] - field_header.get_width()) // 2, 85))
-        screen.blit(field_header, (x_green + (f_widths[i] - field_header.get_width()) // 2, 85))
+        screen.blit(field_header, (x_red + (f_widths[i] - field_header.get_width()) // 2, 80))
+        screen.blit(field_header, (x_green + (f_widths[i] - field_header.get_width()) // 2, 80))
 
     
 
