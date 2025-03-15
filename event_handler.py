@@ -23,10 +23,18 @@ def handle_event(event, game_state, app_client, app_server):
                 red_has_player = any(player.player_id for player in game_state.red_team)
                 green_has_player = any(player.player_id for player in game_state.green_team)
                 
-                if red_has_player and green_has_player:
-                    game_state.gameStart(app_client)
-                else:
-                    print("Need at least one player on each team to start the game")
+                if not (red_has_player and green_has_player):
+                    print("Each team needs at least 1 player to start the game.")
+                    return
+                
+                allequiped, missing_equip = validate_equipIDS(game_state.red_team, game_state.green_team)
+
+                if not allequiped:
+                    for player_info in missing_equip:
+                        print(f"{player_info} lacking equipment ID")
+                    return
+                
+                game_state.gameStart(app_client)
             elif event.key == pygame.K_F2: # Switch to game parameters screen (change network address here)
                 game_state.active_view = "parameters"
                 game_state.previous_input = game_state.active_input
@@ -36,28 +44,48 @@ def handle_event(event, game_state, app_client, app_server):
         elif game_state.active_view == "parameters":
             if event.key == pygame.K_F1:  # Change to edit game
                 game_state.active_view = "entry"
-                game_state.active_input = game_state.previous_input or "player_id"
+                game_state.active_input = game_state.previous_input or "p_id"
+                game_state.input_text = ''
             elif event.key == pygame.K_F5:  # Start game
                 red_has_player = any(player.player_id for player in game_state.red_team)
                 green_has_player = any(player.player_id for player in game_state.green_team)
                 
-                if red_has_player and green_has_player:
-                    game_state.gameStart(app_client)
-                else:
-                    print("Need at least one player on each team to start the game")
+                if not (red_has_player and green_has_player):
+                    print("Each team needs at least 1 player to start the game.")
+                    return
+                
+                allequiped, missing_equip = validate_equipIDS(game_state.red_team, game_state.green_team)
+
+                if not allequiped:
+                    for player_info in missing_equip:
+                        print(f"{player_info} lacking equipment ID")
+                    return
+                
+                game_state.gameStart(app_client)
             elif event.key == pygame.K_RETURN:  # Start network address entry
                 if is_valid_ip(game_state.input_text.strip()):
                     new_ip_address = game_state.input_text.strip()
                     app_client.set_network_address(new_ip_address)
                     app_server.set_network_address(new_ip_address)
-                    game_state.active_input = None
+                    print(f"Changed Network address to {new_ip_address}")
+                    game_state.active_input = 'entry'
+                    game_state.active_input = game_state.previous_input or 'p_id'
                 else:
                     print("⚠️ Invalid Network Address!")
                 game_state.input_text = ""  # Clear input box
             elif event.key == pygame.K_BACKSPACE:
                 game_state.input_text = game_state.input_text[:-1]
+            elif event.key == pygame.K_ESCAPE:
+                game_state.active_view ='entry'
+                game_state.active_input = game_state.previous_input or 'p_id'
+                game_state.input_text= ''
             else:
-                game_state.input_text += event.unicode
+                try:
+                    char = event.unicode
+                    if char.isprintable():
+                        game_state.input_text += char
+                except:
+                    pass
         elif game_state.active_view == "game" and game_state.gameOver:
             if event.key == pygame.K_F1:
                 game_state.active_view = "entry"
@@ -74,8 +102,24 @@ def handleInfo(event, game_state, app_client):
             
             # Get the current team's player array
             team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+            other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
             
-            # Store the player ID
+            player_exist = False
+            for i, player in enumerate(team):
+                if player.player_id == player_id and i!= game_state.current_index:
+                    player_exist = True
+                    break
+
+            for player in other_team:
+                if player.player_id == player_id:
+                    player_exist = True
+                    break
+
+            if player_exist:
+                print(f"Player ID {player_id} already exists!")
+                game_state.input_text = ''
+                return
+
             team[game_state.current_index].player_id = player_id
             
             # Query database for existing codename
@@ -171,3 +215,15 @@ def handleInfo(event, game_state, app_client):
                 game_state.input_text += char
         except:
             pass
+
+def validate_equipIDS(red_team, green_team):
+    allValid = True
+    missing = []
+
+    for tname, team in [("Red", red_team), ("Green", green_team)]:
+        for i, player in enumerate(team):
+            if player.player_id and not player.equipment_id:
+                allValid = False
+                missing.append(f"{tname} PLayer #{i+1}: {player.player_id}")
+    
+    return allValid, missing
