@@ -71,7 +71,7 @@ def handle_event(event, game_state, app_client, app_server):
                     game_state.active_input = 'entry'
                     game_state.active_input = game_state.previous_input or 'p_id'
                 else:
-                    print("⚠️ Invalid Network Address!")
+                    print("⚠️ Invalid Network Address! Please try again. ")
                 game_state.input_text = ""  # Clear input box
             elif event.key == pygame.K_BACKSPACE:
                 game_state.input_text = game_state.input_text[:-1]
