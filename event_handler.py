@@ -95,39 +95,44 @@ def handle_event(event, game_state, app_client, app_server):
         
 def handleInfo(event, game_state, app_client):
     if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-        print("ENTER key detected")
+        # print("ENTER key detected")
         if game_state.active_input == "p_id" and game_state.input_text:
             player_id = game_state.input_text.strip()
-            print(f"Setting player ID directly to: {player_id}")
-            
-            # Get the current team's player array
-            team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
-            other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
-            
-            player_exist = False
-            for i, player in enumerate(team):
-                if player.player_id == player_id and i!= game_state.current_index:
-                    player_exist = True
-                    break
+            # print(f"Setting player ID directly to: {player_id}")
 
-            for player in other_team:
-                if player.player_id == player_id:
-                    player_exist = True
-                    break
+            if player_id.isdigit():
+                # Get the current team's player array
+                team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+                other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
+                
+                player_exist = False
+                for i, player in enumerate(team):
+                    if player.player_id == player_id and i!= game_state.current_index:
+                        player_exist = True
+                        break
 
-            if player_exist:
-                print(f"Player ID {player_id} already exists!")
+                for player in other_team:
+                    if player.player_id == player_id:
+                        player_exist = True
+                        break
+
+                if player_exist:
+                    print(f"Player ID {player_id} already exists!")
+                    game_state.input_text = ''
+                    return
+
+                team[game_state.current_index].player_id = player_id
+                
+                # Query database for existing codename
+                if player_id.isdigit():
+                    codename = game_state.query_codename(player_id)
+                    if codename:
+                        print(f"Found codename in database: {codename}")
+                        team[game_state.current_index].codename = codename
+            else:
+                print("Invalid Player ID!")
                 game_state.input_text = ''
                 return
-
-            team[game_state.current_index].player_id = player_id
-            
-            # Query database for existing codename
-            if player_id.isdigit():
-                codename = game_state.query_codename(player_id)
-                if codename:
-                    print(f"Found codename in database: {codename}")
-                    team[game_state.current_index].codename = codename
             
             # Move to equipment ID field
             game_state.active_input = "e_id"
@@ -135,7 +140,7 @@ def handleInfo(event, game_state, app_client):
             return
         elif game_state.active_input == "e_id" and game_state.input_text:
             equipment_id = game_state.input_text.strip()
-            print(f"Setting equipment ID directly to: {equipment_id}")
+            # print(f"Setting equipment ID directly to: {equipment_id}")
             
             if equipment_id.isdigit():  
                 team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
@@ -166,6 +171,10 @@ def handleInfo(event, game_state, app_client):
                     print(f"Sent equipment ID {equipment_id} to client")
                 except Exception as e:
                     print(f"Warning: Could not send equipment ID: {e}")
+            else:
+                print("Invalid Equipment ID!")
+                game_state.input_text = ''
+                return
             
             # Move to name field
             if team[game_state.current_index].codename:
@@ -179,7 +188,7 @@ def handleInfo(event, game_state, app_client):
             return
         elif game_state.active_input == "name" and game_state.input_text:
             codename = game_state.input_text.strip()
-            print(f"Setting codename directly to: {codename}")
+            # print(f"Setting codename directly to: {codename}")
             
             team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
             other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
@@ -196,7 +205,7 @@ def handleInfo(event, game_state, app_client):
                     break
 
             if codename_exist:
-                print(f"Codenamen {codename} already exists!")
+                print(f"Codename {codename} already exists!")
                 game_state.input_text = ''
                 return
             
