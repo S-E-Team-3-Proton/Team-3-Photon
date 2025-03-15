@@ -166,7 +166,7 @@ def draw_parameters_screen(screen, game_state):
     # draw buttons centered in team area at the bottom of the screen
     draw_button(screen, "F1 - Edit Game", start_x, SCREEN_HEIGHT - 70)
     draw_button(screen, "F2 - Game Parameters", start_x + button_width + button_spacing, SCREEN_HEIGHT - 70)
-    draw_button(screen, "F3 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
+    draw_button(screen, "F5 - Start Game", start_x + 2 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     
 def draw_button(screen, text, x, y):
