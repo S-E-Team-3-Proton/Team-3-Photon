@@ -1,5 +1,5 @@
 import pygame
-from game import init_game, GameState, handle_event
+from game import init_game, GameState, get_app_client, get_app_server
 from render import draw_view
 from event_handler import handle_event
 
