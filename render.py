@@ -172,13 +172,13 @@ def draw_parameters_screen(screen, game_state):
     screen.blit(input_surface, (SCREEN_WIDTH // 2 -150 + 2 + 5, 130 + 5))
 
     # Calculate button from Red Team start to Green Team end
-    button_area_start = SCREEN_WIDTH // 4 - 150  # Left boundary 
     #button_area_end = SCREEN_WIDTH * 3 // 4 - 150 + 300  # Right boundary
     #button_area_width = button_area_end - button_area_start  # Total width
 
     # calculate button centering
     button_width = 90
     button_spacing = 40  # Space between buttons
+    button_area_start = SCREEN_WIDTH // 4 - 150  # Left boundary 
     #total_button_width = 5 * button_width + 4 * button_spacing  # Total width of all buttons
     #start_x = button_area_start + (button_area_width - total_button_width) // 2  # Center within team area
     start_x = button_area_start
