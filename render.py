@@ -275,6 +275,8 @@ def drawScores(screen, team, x, y, color):
             
             yoffset += 30
             
-            # Only show top 8 players to fit on screen
             if i >= 7:
                 break
+
+
+    
