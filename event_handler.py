@@ -224,6 +224,6 @@ def validate_equipIDS(red_team, green_team):
         for i, player in enumerate(team):
             if player.player_id and not player.equipment_id:
                 allValid = False
-                missing.append(f"{tname} PLayer #{i+1}: {player.player_id}")
+                missing.append(f"{tname} Player #{i+1}: {player.player_id}")
     
     return allValid, missing
