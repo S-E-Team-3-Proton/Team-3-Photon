@@ -98,6 +98,7 @@ class PDB:
                     (p_id, newName)
                 )
             self.connection.commit()
+            return True
         except:
             print("Error updating player")
             self.connection.rollback()
