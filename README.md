@@ -45,7 +45,7 @@ python3 main.py
 - **Up and Down Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
 - **RETURN**: Enters the typed information into the cell
-  - **Note**: You must enter all of a player's information before you can move to change to a different cell
+  - **Note**: You must enter all of a player's information before you can move to change to a different player
 - **F1**: Edit player entry screen
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F5**: Start the game
@@ -63,6 +63,7 @@ python3 main.py
 
 ## Players Needed To Start the Game
 - Our code requires the game to have one player on each team to run the game. So, make sure that there is at least one player on each team to avoid errors.
+- This can be changed in the future, we felt this worked best for standard games.
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
