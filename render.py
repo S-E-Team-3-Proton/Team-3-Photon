@@ -141,7 +141,9 @@ def draw_playerInfo(screen, game_state, player, x, y, f_widths, spacing, team, i
         else:
             textXPos = x_pos + 5
 
-        screen.blit(text_S,(textXPos, y + 5))
+        text_height = text_S.get_height()
+        text_y = y + (25 - text_height) // 2 
+        screen.blit(text_S, (textXPos, text_y))
 
 
 def draw_parameters_screen(screen, game_state):
