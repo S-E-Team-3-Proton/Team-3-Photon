@@ -61,6 +61,9 @@ python3 main.py
 - Error handling for incorrect network addresses
 - Overrides and deletes player information in the application when you enter new information in the same cell
 
+## Players Needed To Start the Game
+- Our code requires the game to have one player on each team to run the game. So, make sure that there is at least one player on each team to avoid errors.
+
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
 
