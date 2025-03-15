@@ -200,16 +200,6 @@ def handleInfo(event, game_state, app_client):
         game_state.current_index = (game_state.current_index + 1) % 15
     elif event.key == pygame.K_UP:
         game_state.current_index = (game_state.current_index - 1) % 15
-    elif event.key == pygame.K_LEFT:
-        if game_state.active_input == "e_id":
-            game_state.active_input = "p_id"
-        elif game_state.active_input == "name":
-            game_state.active_input = "e_id"
-    elif event.key == pygame.K_RIGHT:
-        if game_state.active_input == "p_id":
-            game_state.active_input = "e_id"
-        elif game_state.active_input == "e_id":
-            game_state.active_input = "name"
     elif event.key == pygame.K_TAB:
         game_state.current_team = "green" if game_state.current_team == "red" else "red"
     elif event.key == pygame.K_BACKSPACE:
