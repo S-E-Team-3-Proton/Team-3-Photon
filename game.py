@@ -150,6 +150,7 @@ class GameState:
                 elif self.timer <= 30 * fps and self.timer > (30 * fps - fps):
                     self.add_game_event("30 Seconds Left!")
             except:
+                print("Running Error")
                 self.timer = 6.0*60
         
 
