@@ -86,8 +86,8 @@ def draw_entry_screen(screen, game_state):
 
 
     # calculate button centering
-    button_width = 180
-    button_spacing = 20  # Space between buttons
+    button_width = 120
+    button_spacing = 10  # Space between buttons
     total_buttons = 5
     total_width = button_width * total_buttons + button_spacing * (total_buttons - 1)
     start_x = SCREEN_WIDTH // 2 - total_width // 2  # Center all buttons
@@ -177,8 +177,8 @@ def draw_parameters_screen(screen, game_state):
     #button_area_width = button_area_end - button_area_start  # Total width
 
     # calculate button centering
-    button_width = 180
-    button_spacing = 20  # Space between buttons
+    button_width = 120
+    button_spacing = 10  # Space between buttons
     total_buttons = 4
     total_width = button_width * total_buttons + button_spacing * (total_buttons - 1)
     start_x = SCREEN_WIDTH // 2 - total_width // 2  # Center all buttons
@@ -190,7 +190,7 @@ def draw_parameters_screen(screen, game_state):
     draw_button(screen, "F7 - New Game", start_x + 3 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
     
 def draw_button(screen, text, x, y):
-    button_rect = pygame.Rect(x, y, 180, 40) 
+    button_rect = pygame.Rect(x, y, 120, 40) 
     pygame.draw.rect(screen, GRAY, button_rect, border_radius=8)
     # pygame.draw.rect(screen, GRAY, button_rect)
 
