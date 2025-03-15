@@ -151,7 +151,13 @@ def handleInfo(event, game_state, app_client):
                     print(f"Warning: Could not send equipment ID: {e}")
             
             # Move to name field
-            game_state.active_input = "name"
+            if team[game_state.current_index].codename:
+                # If codename exists, move to next player
+                game_state.current_index = (game_state.current_index + 1) % 15
+                game_state.active_input = "p_id"
+            else:
+                # Otherwise, move to name field
+                game_state.active_input = "name"
             game_state.input_text = ""
             return
         elif game_state.active_input == "name" and game_state.input_text:
