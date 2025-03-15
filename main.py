@@ -22,7 +22,7 @@ def main():
         pygame.display.update()
         pygame.time.wait(3000)  # Display splash screen for 3 seconds
     except:
-        print(Couldn't load splash screen")
+        print("Couldn't load splash screen")
     
     # Initialize game state
     game_state = GameState()
