@@ -85,10 +85,10 @@ def draw_entry_screen(screen, game_state):
         draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, spacing, "green", i)
 
 
-    button_area_start = SCREEN_WIDTH // 2 - (button_width * 2 + button_spacing * 1.5)
     # calculate button centering
     button_width = 90
     button_spacing = 40  # Space between buttons
+    button_area_start = SCREEN_WIDTH // 2 - (button_width * 2 + button_spacing * 1.5)
     start_x = button_area_start
 
 
