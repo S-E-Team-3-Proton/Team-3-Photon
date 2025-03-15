@@ -192,9 +192,20 @@ def handleInfo(event, game_state, app_client):
             game_state.input_text = ""
             return
 
-
     selectedTeam = game_state.red_team if game_state.current_team == "red" else game_state.green_team
     otherTeam = game_state.green_team if game_state.current_team == "green" else game_state.red_team
+
+    if game_state.active_input == "p_id":
+        if event.key == pygame.K_DOWN:
+            game_state.current_index = (game_state.current_index + 1) % 15
+        elif event.key == pygame.K_UP:
+            game_state.current_index = (game_state.current_index - 1) % 15
+        elif event.key == pygame.K_TAB:
+            game_state.current_team = "green" if game_state.current_team == "red" else "red"
+    elif game_state.active_input in ["e_id", "name"]:
+        if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_TAB, pygame.K_LEFT, pygame.K_RIGHT]:
+            print("⚠️ Please finish entering current field before navigating.")
+            return
 
     if event.key == pygame.K_DOWN:
         game_state.current_index = (game_state.current_index + 1) % 15
