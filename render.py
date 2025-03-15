@@ -47,8 +47,8 @@ def draw_entry_screen(screen, game_state):
     green_header_x = SCREEN_WIDTH * 3 // 4 - green_header.get_width() // 2
 
 
-    screen.blit(red_header, (red_header_x, 60))
-    screen.blit(green_header, (green_header_x, 60))
+    screen.blit(red_header, (red_header_x, 57))
+    screen.blit(green_header, (green_header_x, 57))
 
 
     field_names = ["p_id","e_id","name"]
@@ -108,7 +108,7 @@ def draw_playerInfo(screen, game_state, player, x, y, f_widths, spacing, team, i
         player.codename if player.codename else ""
     ]
     
-    field_names = ["P_ID","E_ID","Name"]
+    field_names = ["p_id","e_id","name"]
     fieldColor = RED if team == "red" else GREEN
 
     for i, val in enumerate(field_vals):
