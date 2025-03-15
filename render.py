@@ -51,28 +51,41 @@ def draw_entry_screen(screen, game_state):
     screen.blit(green_header, (green_header_x, 60))
 
 
-    field_names = ["P_ID","E_ID","Name"]
-    f_widths=[60,60,180]
+    field_names = ["p_id","e_id","name"]
+    f_widths=[70,70,190] # width of the box
+    spacing = 10 # space between boxes
 
-    x_redP = SCREEN_WIDTH // 4 - sum(f_widths) // 2
-    x_greenP = SCREEN_WIDTH * 3 // 4 - sum(f_widths) // 2
+    total_width = sum(f_widths) + spacing * 2 # spacing between three boxes.
 
+    x_redP = SCREEN_WIDTH // 4 - total_width // 2
+    x_greenP = SCREEN_WIDTH * 3 // 4 - total_width // 2
+
+    
+    # Draw field headers
     for i, field in enumerate(field_names):
-        x_red = x_redP + sum(f_widths[:i])
-        x_green = x_greenP + sum(f_widths[:i])
+        x_red = x_redP
+        x_green = x_greenP
+        
+        # width of previous boxes plus spacing
+        for j in range(i):
+            x_red += f_widths[j] + spacing
+            x_green += f_widths[j] + spacing
+            
+        field_header = FONT.render(field, True, WHITE)
+        screen.blit(field_header, (x_red + (f_widths[i] - field_header.get_width()) // 2, 85))
+        screen.blit(field_header, (x_green + (f_widths[i] - field_header.get_width()) // 2, 85))
 
-        field_header= FONT.render(field, True, WHITE)
-        screen.blit(field_header, (x_red+(f_widths[i] - field_header.get_width())//2, 85))
-        screen.blit(field_header, (x_green+(f_widths[i] - field_header.get_width())//2, 85))
+    
 
     
     # Draw player slots with rounded corners & shadow
     for i in range(15):
         y_pos = 100 + i * 30
-        draw_playerInfo(screen, game_state, game_state.red_team[i], x_redP, y_pos, f_widths, "red", i)
-        draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, "green", i)
+        draw_playerInfo(screen, game_state, game_state.red_team[i], x_redP, y_pos, f_widths, spacing, "red", i)
+        draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, spacing, "green", i)
 
-    button_area_start = x_redP  # Left boundary (Red Team start)
+
+    button_area_start = SCREEN_WIDTH // 2 - (button_width * 2 + button_spacing * 1.5)
     # calculate button centering
     button_width = 90
     button_spacing = 40  # Space between buttons
@@ -87,19 +100,26 @@ def draw_entry_screen(screen, game_state):
     draw_button(screen, "F12 - Clear Game", start_x + 4 * (button_width + button_spacing), SCREEN_HEIGHT - 70)
 
 
-def draw_playerInfo(screen, game_state, player, x, y, f_widths, team, index):
-    field_vals = [str(player.player_id) if player.player_id else "", str(player.equipment_id) if player.equipment_id else "",
-        player.codename if player.codename else ""]
+def draw_playerInfo(screen, game_state, player, x, y, f_widths, spacing, team, index):
+    field_vals = [
+        str(player.player_id) if player.player_id else "", 
+        str(player.equipment_id) if player.equipment_id else "",
+        player.codename if player.codename else ""
+    ]
     
     field_names = ["p_id","e_id","name"]
     fieldColor = RED if team == "red" else GREEN
 
     for i, val in enumerate(field_vals):
-        x_pos = x + sum(f_widths[:i])
-        f_width = f_widths[i]
+        x_pos = x
+        for j in range(i):
+            x_pos += f_widths[j] + spacing 
 
-        pygame.draw.rect(screen, (20,20,20), (x_pos + 3, y + 3, f_width, 25), border_radius=6)
+        f_width = f_widths[i]  
+
+        pygame.draw.rect(screen, (20, 20, 20), (x_pos + 3, y + 3, f_width, 25), border_radius=6)
         pygame.draw.rect(screen, fieldColor, (x_pos, y, f_width, 25), border_radius=6)
+
 
         active = (game_state.current_team == team
                   and game_state.current_index == index
@@ -210,8 +230,8 @@ def draw_game_screen(screen, game_state):
     screen.blit(red_header, (SCREEN_WIDTH // 4 - red_header.get_width() // 2, 60))
     screen.blit(red_score_text, (SCREEN_WIDTH // 4 - red_score_text.get_width() // 2, 90))
 
-    GREEN_header = TITLE_FONT.render("GREEN TEAM", True, flash_color if green_score > green_score else GREEN)
-    GREEN_score_text = TITLE_FONT.render(str(green_score), True, flash_color if green_score > green_score else GREEN)
+    GREEN_header = TITLE_FONT.render("GREEN TEAM", True, flash_color if green_score > red_score else GREEN)
+    GREEN_score_text = TITLE_FONT.render(str(green_score), True, flash_color if green_score > red_score else GREEN)
     screen.blit(GREEN_header, (SCREEN_WIDTH *3// 4 - GREEN_header.get_width() // 2, 60))
     screen.blit(GREEN_score_text, (SCREEN_WIDTH *3// 4 - GREEN_score_text.get_width() // 2, 90))
 
