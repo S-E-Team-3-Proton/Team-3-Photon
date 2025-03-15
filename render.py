@@ -51,7 +51,7 @@ def draw_entry_screen(screen, game_state):
     screen.blit(green_header, (green_header_x, 60))
 
 
-    field_names = ["p_id","e_id","name"]
+    field_names = ["P_ID","E_ID","Name"]
     f_widths=[70,70,190] # width of the box
     spacing = 10 # space between boxes
 
