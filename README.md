@@ -47,10 +47,15 @@ python3 main.py
 - **RETURN**: Enters the typed information into the cell
   - **Note**: You must enter all of a player's information before you can move to change to a different player
 - **F1**: Edit player entry screen
+  - **Note**: You can use this after a game is over to return to the player entry screen 
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F5**: Start the game
 - **F7**: Create a new game (Not Implemented)
 - **F12**: Clear the current game setup
+
+## Players Needed To Start the Game
+- Our code requires the game to have one player on each team to run the game. So, make sure that there is at least one player on each team to avoid errors.
+- This can be changed in the future, we felt this worked best for standard games.
 
 ## Features
 - Query and insert player details into a PostgreSQL database
@@ -60,10 +65,8 @@ python3 main.py
 - Displays Codename of player on the player entry screen after entering information
 - Error handling for incorrect network addresses
 - Overrides and deletes player information in the application when you enter new information in the same cell
-
-## Players Needed To Start the Game
-- Our code requires the game to have one player on each team to run the game. So, make sure that there is at least one player on each team to avoid errors.
-- This can be changed in the future, we felt this worked best for standard games.
+- You can start a 6 minute game
+- The game has a 30 seconds countdown before starting
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
