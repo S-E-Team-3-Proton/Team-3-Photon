@@ -137,9 +137,26 @@ def handleInfo(event, game_state, app_client):
             equipment_id = game_state.input_text.strip()
             print(f"Setting equipment ID directly to: {equipment_id}")
             
-            if equipment_id.isdigit():
+            if equipment_id.isdigit():  
                 team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+                other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
                 
+                equipment_exist = False
+                for i, player in enumerate(team):
+                    if player.equipment_id == int(equipment_id) and i!= game_state.current_index:
+                        equipment_exist = True
+                        break
+
+                for player in other_team:
+                    if player.equipment_id == int(equipment_id):
+                        equipment_exist = True
+                        break
+
+                if equipment_exist:
+                    print(f"Equipment ID {equipment_id} already exists!")
+                    game_state.input_text = ''
+                    return
+
                 # Store the equipment ID
                 team[game_state.current_index].equipment_id = int(equipment_id)
                 
@@ -165,6 +182,24 @@ def handleInfo(event, game_state, app_client):
             print(f"Setting codename directly to: {codename}")
             
             team = game_state.red_team if game_state.current_team == "red" else game_state.green_team
+            other_team = game_state.green_team if game_state.current_team == "red" else game_state.red_team
+            
+            codename_exist = False
+            for i, player in enumerate(team):
+                if player.codename == codename and i!= game_state.current_index:
+                    codename_exist = True
+                    break
+
+            for player in other_team:
+                if player.codename == codename:
+                    codename_exist = True
+                    break
+
+            if codename_exist:
+                print(f"Codenamen {codename} already exists!")
+                game_state.input_text = ''
+                return
+            
             player_id = team[game_state.current_index].player_id
             
             # Store the codename
