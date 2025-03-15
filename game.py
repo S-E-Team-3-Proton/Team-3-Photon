@@ -136,9 +136,8 @@ class GameState:
                 self.counting = False
                 self.running = True
                 try:
-                    for _ in range(3):
-                        app_client.send_message('202')
-                        print("Code 202 Sent")
+                    app_client.send_message('202')
+                    print("Code 202 Sent")
                     self.add_game_event("Game started!")
                 except Exception as e:
                     print(f"Error sending game start code: {e}")
