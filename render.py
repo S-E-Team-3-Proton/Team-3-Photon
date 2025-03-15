@@ -72,15 +72,15 @@ def draw_entry_screen(screen, game_state):
             x_green += f_widths[j] + spacing
             
         field_header = FONT.render(field, True, WHITE)
-        screen.blit(field_header, (x_red + (f_widths[i] - field_header.get_width()) // 2, 105))
-        screen.blit(field_header, (x_green + (f_widths[i] - field_header.get_width()) // 2, 105))
+        screen.blit(field_header, (x_red + (f_widths[i] - field_header.get_width()) // 2, 75))
+        screen.blit(field_header, (x_green + (f_widths[i] - field_header.get_width()) // 2, 75))
 
     
 
     
     # Draw player slots with rounded corners & shadow
     for i in range(15):
-        y_pos = 110 + i * 30
+        y_pos = 100 + i * 30
         draw_playerInfo(screen, game_state, game_state.red_team[i], x_redP, y_pos, f_widths, spacing, "red", i)
         draw_playerInfo(screen, game_state, game_state.green_team[i], x_greenP, y_pos, f_widths, spacing, "green", i)
 
