@@ -247,7 +247,7 @@ def draw_game_screen(screen, game_state):
     yoffset = 165
     for event in game_state.game_events[-8:]:
         etext = FONT.render(event, True, WHITE)
-        screen.blit(etext, (SCREEN_WIDTH // 2 - 240, yoffset))
+        screen.blit(etext, (SCREEN_WIDTH // 2 - 300, yoffset))
         yoffset += 20
 
     drawScores(screen, game_state.red_team, SCREEN_WIDTH//4 -125, 350, RED)
