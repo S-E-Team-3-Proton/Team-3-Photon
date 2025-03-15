@@ -136,10 +136,10 @@ class GameState:
                 self.counting = False
                 self.running = True
                 try:
-                    app_client.send_message('202')
-                    app_client.send_message('202')
-                    app_client.send_message('202')
-                    self.add_game_event("Game started! Code 202 sent.")
+                    for _ in range(3):
+                        app_client.send_message('202')
+                        print("Code 202 Sent")
+                    self.add_game_event("Game started!")
                 except Exception as e:
                     print(f"Error sending game start code: {e}")
             elif int(self.countDown) % 10 == 0 and abs(self.countDown - int(self.countDown)) < 0.01:
@@ -153,7 +153,8 @@ class GameState:
 
                     for _ in range(3):
                         app_client.send_message('221')
-                    self.add_game_event("Game over! Code 221 sent.")
+                        print("Code 221 Sent")
+                    self.add_game_event("Game over!")
 
                 elif self.timer <= 30 * fps and self.timer > (30 * fps - fps):
                     self.add_game_event("30 Seconds Left!")
