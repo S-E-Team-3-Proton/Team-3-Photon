@@ -267,7 +267,7 @@ def draw_game_screen(screen, game_state):
     screen.blit(timer_display, (SCREEN_WIDTH // 2 - timer_display.get_width() // 2, SCREEN_HEIGHT - 60))
 
     if game_state.gameOver:
-        draw_button(screen, "Back to Menu", SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT - 100)
+        draw_button(screen, "F1 - Player Entry", SCREEN_WIDTH // 2 - 65, SCREEN_HEIGHT - 100)
 
 def drawScores(screen, team, x, y, color):
     valid_players = []
