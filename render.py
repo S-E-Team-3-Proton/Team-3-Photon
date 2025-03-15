@@ -108,7 +108,7 @@ def draw_playerInfo(screen, game_state, player, x, y, f_widths, spacing, team, i
         player.codename if player.codename else ""
     ]
     
-    field_names = ["P_id","E_id","Name"]
+    field_names = ["P_ID","E_ID","Name"]
     fieldColor = RED if team == "red" else GREEN
 
     for i, val in enumerate(field_vals):
