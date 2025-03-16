@@ -245,13 +245,13 @@ def draw_game_screen(screen, game_state):
     screen.blit(red_score_text, (red_x - red_score_text.get_width() // 2, score_y))
     #Green team header for game event screen
     green_color = flash_color if green_score > red_score else GREEN
-    green_x = center_x + spacing
+    green_x = center_x + spacing - 18
     green_header = TITLE_FONT.render("GREEN TEAM", True, green_color)
     green_score_text = TITLE_FONT.render(str(green_score), True, green_color)
     screen.blit(green_header, (green_x - green_header.get_width() // 2, team_header_y))
     screen.blit(green_score_text, (green_x - green_score_text.get_width() // 2, score_y))
     #Blue display box for game event screen
-    p_width = SCREEN_WIDTH - 100
+    p_width = SCREEN_WIDTH - 50
     centrPoint = (SCREEN_WIDTH - p_width) // 2
     pygame.draw.rect(screen, (0,0,100), (centrPoint, 90, p_width, 200), border_radius=10)
     pygame.draw.rect(screen, (0,0,150), (centrPoint, 90, p_width, 30), border_radius=10)
@@ -264,8 +264,8 @@ def draw_game_screen(screen, game_state):
         screen.blit(etext, (SCREEN_WIDTH // 2 - 340, yoffset))
         yoffset += 20
     #player scores for each team
-    drawScores(screen, game_state.red_team, SCREEN_WIDTH//4 -125, 350, RED)
-    drawScores(screen, game_state.green_team, SCREEN_WIDTH*3//4 -125, 350, GREEN)
+    drawScores(screen, game_state.red_team, centrPoint, 300, RED)
+    drawScores(screen, game_state.green_team, SCREEN_WIDTH // 2, 300, GREEN)
 
     if game_state.counting:
         timer_text = f"Starting in: {int(game_state.countDown)} seconds"
@@ -281,7 +281,7 @@ def draw_game_screen(screen, game_state):
     screen.blit(timer_display, (SCREEN_WIDTH // 2 - timer_display.get_width() // 2, SCREEN_HEIGHT - 60))
 
     if game_state.gameOver:
-        draw_button(screen, "F1 - Player Entry", SCREEN_WIDTH // 2 - 65, SCREEN_HEIGHT - 100)
+        draw_button(screen, "F1 - Edit Game", centrPoint, SCREEN_HEIGHT - 60)
 
 def drawScores(screen, team, x, y, color):
     valid_players = []
@@ -291,12 +291,13 @@ def drawScores(screen, team, x, y, color):
             
     playersByScore = sorted(valid_players, key=lambda p: p.score, reverse=True)
     
-    pygame.draw.rect(screen, color, (x, y, 250, 30), border_radius=6)
+    pygame.draw.rect(screen, color, (x, y, 370, 30), border_radius=6)
     header = FONT.render("Player Scores", True, WHITE)
-    screen.blit(header, (x + 125 - header.get_width() // 2, y + 5))
+    screen.blit(header, (x + 185 - header.get_width() // 2, y + 5))
 
     backgrColor = (30,30,30)
     yoffset= y+35
+    yoffset2= y+35
 
     for i, player in enumerate(playersByScore):
         if player.player_id:
@@ -308,13 +309,15 @@ def drawScores(screen, team, x, y, color):
             name_bckg = FONT.render(p_name, True, WHITE)
             score_bckg = FONT.render(str(p_score), True, WHITE)
             
-            screen.blit(name_bckg, (x + 10, yoffset + 5))
-            screen.blit(score_bckg, (x + 240 - score_bckg.get_width(), yoffset + 5))
-            
-            yoffset += 30
-            
-            if i >= 7:
-                break
+            if i < 8:
+                screen.blit(name_bckg, (x + 1, yoffset + 5))
+                screen.blit(score_bckg, (x + 175 - score_bckg.get_width(), yoffset + 5))
+                yoffset += 30
+            else:
+                screen.blit(name_bckg, (x + 186, yoffset2 + 5))
+                screen.blit(score_bckg, (x + 360 - score_bckg.get_width(), yoffset2 + 5))
+                yoffset2 += 30
+
 
 
     
