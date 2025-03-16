@@ -80,6 +80,30 @@ class PDB:
     def remove_EquipID(self, p_id):
         del self.equipped_yes[int(p_id)]
 
+    def update_player(self, p_id, newName):
+        try:
+            self.pointer.execute(
+                "SELECT id FROM players WHERE id = %s",
+                (p_id,)
+            )
+            exist = self.pointer.fetchone()
+            if exist:
+                self.pointer.execute(
+                    "UPDATE players SET codename = %s WHERE id = %s",
+                    (newName, p_id)
+                )
+            else:
+                self.pointer.execute(
+                    "INSERT INTO players (id, codename) VALUES (%s, %s)",
+                    (p_id, newName)
+                )
+            self.connection.commit()
+            return True
+        except:
+            print("Error updating player")
+            self.connection.rollback()
+            return False
+
     #return pla
     def assigned_IDs(self):
         plist = []
