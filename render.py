@@ -231,10 +231,10 @@ def draw_game_screen(screen, game_state):
     if game_state.timer % 30 < 15 and (red_score != green_score):
         flash_color = WHITE
     #vertical alignment for red/green team 
-    team_header_y = title_y + 50
+    team_header_y = title_y
     score_y = team_header_y + 35
     #equal horizontal spacing from center
-    spacing = 200
+    spacing = 300
     center_x = SCREEN_WIDTH // 2
     #Red team header and score for game event screen
     red_color = flash_color if red_score > green_score else RED
@@ -253,12 +253,12 @@ def draw_game_screen(screen, game_state):
     #Blue display box for game event screen
     p_width = SCREEN_WIDTH - 100
     centrPoint = (SCREEN_WIDTH - p_width) // 2
-    pygame.draw.rect(screen, (0,0,100), (centrPoint, 130, p_width, 200), border_radius=10)
-    pygame.draw.rect(screen, (0,0,150), (centrPoint, 130, p_width, 30), border_radius=10)
+    pygame.draw.rect(screen, (0,0,100), (centrPoint, 90, p_width, 200), border_radius=10)
+    pygame.draw.rect(screen, (0,0,150), (centrPoint, 90, p_width, 30), border_radius=10)
     event_head = FONT.render("Current Actions", True, WHITE)
-    screen.blit(event_head,(SCREEN_WIDTH//2 - event_head.get_width()//2, 135))
+    screen.blit(event_head,(SCREEN_WIDTH//2 - event_head.get_width()//2, 95))
     #display game event messages
-    yoffset = 165
+    yoffset = 125
     for event in game_state.game_events[-8:]:
         etext = FONT.render(event, True, WHITE)
         screen.blit(etext, (SCREEN_WIDTH // 2 - 340, yoffset))
