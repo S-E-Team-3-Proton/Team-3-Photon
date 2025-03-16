@@ -215,6 +215,7 @@ def draw_game_screen(screen, game_state):
     for i in range(SCREEN_HEIGHT):
         pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
     
+    #game action display 
     title_shadow = TITLE_FONT.render("Game Action Screen", True, (50, 50, 50))
     screen.blit(title_shadow, (SCREEN_WIDTH // 2 - title_shadow.get_width() // 2 + 2, 22))
     title = TITLE_FONT.render("Game Action Screen", True, WHITE)
@@ -226,30 +227,39 @@ def draw_game_screen(screen, game_state):
     flash_color = RED if red_score > green_score else GREEN if green_score > red_score else WHITE
     if game_state.timer % 30 < 15 and (red_score != green_score):
         flash_color = WHITE
-
-    red_header = TITLE_FONT.render("RED TEAM", True, flash_color if red_score > green_score else RED)
-    red_score_text = TITLE_FONT.render(str(red_score), True, flash_color if red_score > green_score else RED)
-    screen.blit(red_header, (SCREEN_WIDTH // 4 - red_header.get_width() // 2, 60))
-    screen.blit(red_score_text, (SCREEN_WIDTH // 4 - red_score_text.get_width() // 2, 90))
-
-    GREEN_header = TITLE_FONT.render("GREEN TEAM", True, flash_color if green_score > red_score else GREEN)
-    GREEN_score_text = TITLE_FONT.render(str(green_score), True, flash_color if green_score > red_score else GREEN)
-    screen.blit(GREEN_header, (SCREEN_WIDTH *3// 4 - GREEN_header.get_width() // 2, 60))
-    screen.blit(GREEN_score_text, (SCREEN_WIDTH *3// 4 - GREEN_score_text.get_width() // 2, 90))
-
+    #y-pos reference and horizontal  spacing
+    team_header_y = 70
+    score_y = team_header_y + 40
+    spacing = 250
+    #width definition
+    red_x = SCREEN_WIDTH // 2 - spacing
+    green_x = SCREEN_WIDTH // 2 + spacing
+    #Red team header and score for game event screen
+    red_color = flash_color if red_score > green_score else RED
+    red_header = TITLE_FONT.render("RED TEAM", True, red_color)
+    red_score_text = TITLE_FONT.render(str(red_score), True, red_color)
+    screen.blit(red_header, (red_x - red_header.get_width() // 2, team_header_y))
+    screen.blit(red_score_text, (red_x - red_score_text.get_width() // 2, score_y))
+    #Green team header for game event screen
+    green_color = flash_color if green_score > red_score else GREEN
+    green_header = TITLE_FONT.render("GREEN TEAM", True, green_color)
+    green_score_text = TITLE_FONT.render(str(green_score), True, green_color)
+    screen.blit(green_header, (green_x - green_header.get_width() // 2, team_header_y))
+    screen.blit(green_score_text, (green_x - green_score_text.get_width() // 2, score_y))
+    #Blue display box for game event screen
     p_width = SCREEN_WIDTH - 100
     centrPoint = (SCREEN_WIDTH - p_width) // 2
     pygame.draw.rect(screen, (0,0,100), (centrPoint, 130, p_width, 200), border_radius=10)
     pygame.draw.rect(screen, (0,0,150), (centrPoint, 130, p_width, 30), border_radius=10)
     event_head = FONT.render("Current Actions", True, WHITE)
     screen.blit(event_head,(SCREEN_WIDTH//2 - event_head.get_width()//2, 135))
-
+    #display game event messages
     yoffset = 165
     for event in game_state.game_events[-8:]:
         etext = FONT.render(event, True, WHITE)
         screen.blit(etext, (SCREEN_WIDTH // 2 - 340, yoffset))
         yoffset += 20
-
+    #player scores for each team
     drawScores(screen, game_state.red_team, SCREEN_WIDTH//4 -125, 350, RED)
     drawScores(screen, game_state.green_team, SCREEN_WIDTH*3//4 -125, 350, GREEN)
 
