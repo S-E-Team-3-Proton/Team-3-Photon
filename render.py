@@ -215,33 +215,37 @@ def draw_game_screen(screen, game_state):
     for i in range(SCREEN_HEIGHT):
         pygame.draw.line(screen, (30, 30, 30), (0, i), (SCREEN_WIDTH, i), 1)  
     
-    #game action display 
+    #game action display main title 
     title_shadow = TITLE_FONT.render("Game Action Screen", True, (50, 50, 50))
-    screen.blit(title_shadow, (SCREEN_WIDTH // 2 - title_shadow.get_width() // 2 + 2, 22))
+    title_shadow_x = SCREEN_WIDTH // 2 - title_shadow.get_width() // 2
+    title_y = 20  # Consistent Y-value for alignment
+    screen.blit(title_shadow, (title_shadow_x + 2, title_y + 2))
     title = TITLE_FONT.render("Game Action Screen", True, WHITE)
-    screen.blit(title, (SCREEN_WIDTH // 2 - title.get_width() // 2, 20))
-
+    title_x = SCREEN_WIDTH // 2 - title.get_width() // 2
+    screen.blit(title, (title_x, title_y))
+    #calculate team scores
     red_score = sum(player.score for player in game_state.red_team if hasattr(player, 'score'))
     green_score = sum(player.score for player in game_state.green_team if hasattr(player, 'score'))
-
+    #determine flashing color
     flash_color = RED if red_score > green_score else GREEN if green_score > red_score else WHITE
     if game_state.timer % 30 < 15 and (red_score != green_score):
         flash_color = WHITE
-    #y-pos reference and horizontal  spacing
-    team_header_y = 70
-    score_y = team_header_y + 40
-    spacing = 250
-    #width definition
-    red_x = SCREEN_WIDTH // 2 - spacing
-    green_x = SCREEN_WIDTH // 2 + spacing
+    #vertical alignment for red/green team 
+    team_header_y = title_y + 50
+    score_y = team_header_y + 35
+    #equal horizontal spacing from center
+    spacing = 200
+    center_x = SCREEN_WIDTH // 2
     #Red team header and score for game event screen
     red_color = flash_color if red_score > green_score else RED
+    red_x = center_x - spacing
     red_header = TITLE_FONT.render("RED TEAM", True, red_color)
     red_score_text = TITLE_FONT.render(str(red_score), True, red_color)
     screen.blit(red_header, (red_x - red_header.get_width() // 2, team_header_y))
     screen.blit(red_score_text, (red_x - red_score_text.get_width() // 2, score_y))
     #Green team header for game event screen
     green_color = flash_color if green_score > red_score else GREEN
+    green_x = center_x + spacing
     green_header = TITLE_FONT.render("GREEN TEAM", True, green_color)
     green_score_text = TITLE_FONT.render(str(green_score), True, green_color)
     screen.blit(green_header, (green_x - green_header.get_width() // 2, team_header_y))
