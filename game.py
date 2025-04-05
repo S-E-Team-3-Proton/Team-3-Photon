@@ -53,6 +53,8 @@ class GameState:
         self.timer = 6*60*60
         self.counting = False
         self.countDown = 30
+        #Track index of last processed data point
+        self.last_processed_i = 0
 
         for team in [self.red_team, self.green_team]:
             for player in team:
@@ -116,6 +118,9 @@ class GameState:
         self.counting = True
         self.running = False
         self.gameOver = False
+        self.last_processed_i = 0
+
+        self.update_server_info()
 
         self.countDown = 30.0
     
@@ -145,6 +150,10 @@ class GameState:
                 self.add_game_event(f"Game starts in {int(self.countDown)} seconds...")
         elif self.running:
             try:
+
+                #Process incoming hit data.  Checks for new hit data, calculates score, updates gamestate with new events and scores
+                self.process_data(app_client)
+                
                 self.timer -= 1/fps
                 if self.timer <= 0:
                     self.running = False
@@ -161,12 +170,69 @@ class GameState:
                 print("Running Error")
                 self.timer = 6.0*60
         
-
+    #add event message to game event list
     def add_game_event(self, eventmsg):
         self.game_events.append(eventmsg)
         if len(self.game_events) > 50:
             self.game_events.pop(0)
 
+    #Synchronizes current team info with the server, allows server to know which equiipment ID is with which team.
+    def update_server_info(self):
+        server = get_app_server()
+        if server and hasattr(server, 'update_team_info'):
+            server.update_team_info(self.red_team, self.green_team)
+
+    #Some quick helper functions
+
+    def find_player_by_eID(self, e_id):
+        for team in [self.red_team, self.green_team]:
+            for player in team:
+                if player.equipment_id == e_id:
+                    return player
+        return None
+    
+    def get_player_team(self, player):
+        for p in self.red_team:
+            if p == player:
+                return 'red'
+        return 'green'
+
+    #Process hit data from UDP server, updates scores and game events, send acknowledgement back using app_client
+    def process_data(self, app_client):
+        try:
+            server = get_app_server()
+            if not server:
+                return
+            
+            recievedData = server.get_data()
+            if not recievedData:
+                return
+            
+            if not hasattr(self, 'last_processed_i'):
+                self.last_processed_i = 0
+            
+            new_data = recievedData[self.last_processed_i:]
+            if not new_data:
+                return
+            
+            self.last_processed_i = len(recievedData)
+
+            for s_eid, t_eid in new_data:
+                shooter = self.find_player_by_eID(s_eid)
+                target = self.find_player_by_eID(t_eid)
+
+                if shooter and target:
+                    shooterTeam = self.get_player_team(shooter)
+                    targetTeam = self.get_player_team(target)
+
+                    if shooterTeam == targetTeam:
+                        shooter.score -= 10
+                        self.add_game_event(f"{shooterTeam.capitalize()} player {shooter.codename} hit teammate {target.codename}! -10 points")
+                    else:
+                        shooter.score += 10
+                        self.add_game_event(f"{shooterTeam.capitalize()} player {shooter.codename} hit {targetTeam} player {target.codename}! + 10 points")
+        except Exception as e:
+            print(f"Error processing: {str(e)}")
 
 def get_app_client():
     return app_client
