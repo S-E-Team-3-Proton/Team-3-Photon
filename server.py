@@ -8,6 +8,7 @@ class UDPServer:
         self.buffer_size = 1024
         self.udp_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM) 
         self.running = False  # Track server status
+        self.received_data = [] #list for storing data from traffic generator
         self.bind_server()  
 
     def bind_server(self):
@@ -20,7 +21,7 @@ class UDPServer:
 
         
     def set_network_address(self, ip_In):
-        """Stops the current server and restarts it with a new IP address."""
+        #Stops the current server and restarts it with a new IP address.
         self.stop()  
         self.ip = ip_In  
         self.udp_socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)  
@@ -43,7 +44,13 @@ class UDPServer:
 
                 print(f"Message from Client: {message.decode()}")
                 print(f"Client IP Address: {address}")
-
+                #message format should be integer:integer
+                # eid of player transmitting : eid of player hit 
+                try:
+                    sender_eid,  eid_of_player_hit = map(int, message.strip().split(":"))
+                    self.received_data.append((sender_eid, eid_of_player_hit))
+                except ValueError:
+                    print(f"Invalid message format received: {message}")
             except Exception as e:
                 print(f"Server socket closed. {e}")
                 break  
@@ -54,3 +61,7 @@ class UDPServer:
             self.udp_socket.close()
             self.udp_socket = None
             print("UDP server has been stopped")
+
+    def get_data(self):
+        #Returns the list of(sender_eid, eid_of_player_hit) tuples
+        return self.received_data 
