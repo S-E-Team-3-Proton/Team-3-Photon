@@ -70,20 +70,20 @@ class UDPServer:
                 address = bytes_address_pair[1]
 
                 message_str = message.decode()
-                print(f"Message from Client: {message.decode()}")
+                print(f"Message from Client: {message_str}")
                 print(f"Client IP Address: {address}")
                 #message format should be integer:integer
                 # eid of player transmitting : eid of player hit 
                 try:
-                    sender_eid,  eid_of_player_hit = map(int, message_str.strip().split(":"))
-                    self.received_data.append((sender_eid, eid_of_player_hit))
+                    sender_eid, target_eid = map(int, message_str.strip().split(":"))
+                    self.received_data.append((sender_eid, target_eid))
 
                     #acknowledge hit registration
                     response_address = (address[0], 7500)
                     self.udp_socket.sendto(str(target_eid).encode(), response_address)
                     print(f"Sent response: {target_eid} to {response_address}")
-                except ValueError:
-                    print(f"Invalid message format received: {message}")
+                except Exception as e:
+                    print(f"Error Processing: {e}")
             except Exception as e:
                 print(f"Server socket closed. {e}")
                 break  
