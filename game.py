@@ -13,6 +13,13 @@ app_client = None
 app_server = None
 
 
+'''
+During startup intialize:
+UDP Client (port 7500) - Broadcasts to connected equipment
+UDP Server (port 7501) - Recieves messages from individual equipment
+both at network (127.0.0.1), default
+'''
+
 def init_game():
     global FONT, TITLE_FONT, BUTTON_FONT, app_client, app_server
     FONT = pygame.font.SysFont('Arial', 20)
@@ -111,7 +118,6 @@ class GameState:
         if hasattr(self, 'db'):
             self.db.disconnect()
 
-
     def gameStart(self, app_client):
         self.active_view = "game"
         self.game_events = []
@@ -133,6 +139,11 @@ class GameState:
 
         self.add_game_event("Game countdown started...")
 
+    '''
+    F5>30 minute countdown>Send 202 to UDP port 7500>
+    Equipment begins accepting input and transmitting data
+    '''
+    
     def gameUpdate(self, app_client):
         fps = 60
         if self.counting:
@@ -197,7 +208,10 @@ class GameState:
                 return 'red'
         return 'green'
 
-    #Process hit data from UDP server, updates scores and game events, send acknowledgement back using app_client
+    '''
+    Listen on 7501, record hits into recieved_data
+    Checks for hits, processes shooter & target, updates scores, generates game events
+    '''
     def process_data(self, app_client):
         try:
             server = get_app_server()
