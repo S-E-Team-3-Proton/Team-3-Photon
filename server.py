@@ -60,7 +60,13 @@ class UDPServer:
         if s_eid in self.green_team_eids and t_eid in self.green_team_eids:
             return True
         return False
-        
+
+
+    '''
+    Player A sends "A_id:B_id" to server on port 7501>
+    Parses shooter and target indentity> Record hit in recieved_data> Send ACK
+    Update points, display, game_events
+    '''
     def run_server(self): #runs the loop to keep the server listening 
         print(f"UDP server up and listening on {self.ip}:{self.port}")  
         while self.running:
