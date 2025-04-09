@@ -244,19 +244,26 @@ def draw_game_screen(screen, game_state):
     center_x = SCREEN_WIDTH // 2
 
     #Red team header and score for game event screen
+    red_winning = red_score > green_score
+    green_winning = green_score > red_score
+    tied = red_score == green_score and (red_score > 0 or green_score > 0)
+    flash_effect = pygame.time.get_ticks() % 1000 < 500
+    
     red_x = center_x - spacing
     red_header = TITLE_FONT.render("RED TEAM", True, RED)
-    red_score_text = TITLE_FONT.render(str(red_score), True, RED)
+    
+    red_score_color = WHITE if (red_winning and flash_effect) else RED
+    red_score_text = TITLE_FONT.render(str(red_score), True, red_score_color)
     
     screen.blit(red_header, (red_x - red_header.get_width() // 2, team_header_y))
     screen.blit(red_score_text, (red_x - red_score_text.get_width() // 2, score_y))
-
-
-
+    
     #Green team header for game event screen
     green_x = center_x + spacing - 18
     green_header = TITLE_FONT.render("GREEN TEAM", True, GREEN)
-    green_score_text = TITLE_FONT.render(str(green_score), True, GREEN)
+    
+    green_score_color = WHITE if (green_winning and flash_effect) else GREEN
+    green_score_text = TITLE_FONT.render(str(green_score), True, green_score_color)
 
     screen.blit(green_header, (green_x - green_header.get_width() // 2, team_header_y))
     screen.blit(green_score_text, (green_x - green_score_text.get_width() // 2, score_y))
@@ -317,6 +324,7 @@ def drawScores(screen, team, x, y, color):
     yoffset= y+35
     yoffset2= y+35
 
+    '''
     all_players = []
     for player in team:
         if player.player_id:
@@ -333,22 +341,18 @@ def drawScores(screen, team, x, y, color):
     if highestScore > 0:
         tieds = sum(1 for p in all_players if getattr(p, 'score', 0) == highestScore)
         tied = tieds > 1
-
+    '''
+    
     for i, player in enumerate(playersByScore):
         if player.player_id:
             pygame.draw.rect(screen, backgrColor, (x,yoffset,250,25), border_radius=4)
             p_name = f"{player.codename}"
             p_score = getattr(player, 'score', 0)
-            flashyn = (player == highest_player and not tied and p_score > 0)
-            fColor = WHITE
-
-            if flashyn and pygame.time.get_ticks() % 1000 < 500:
-                text_color = color
-            else:
-                text_color = WHITE
+            text_color = WHITE
                 
             name_bckg = FONT.render(p_name, True, text_color)
             score_bckg = FONT.render(str(p_score), True, text_color)
+            
             if i < 8:
                 screen.blit(name_bckg, (x + 1, yoffset + 5))
                 screen.blit(score_bckg, (x + 175 - score_bckg.get_width(), yoffset + 5))
