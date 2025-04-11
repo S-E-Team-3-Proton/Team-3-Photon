@@ -149,7 +149,8 @@ class GameState:
         try:
             pygame.mixer.music.load(self.current_track)
             pygame.mixer.music.play()  # Play once without looping
-            self.add_game_event(f"Now playing: {self.current_track}")
+            # self.add_game_event(f"Now playing: {self.current_track}")
+            print(f"Now playing: {self.current_track}")
         except Exception as e:
             print(f"Error playing music: {e}")
 
@@ -198,7 +199,8 @@ class GameState:
 
             if abs(self.countDown - 17.0) < 1/fps and not pygame.mixer.music.get_busy():
                 self.play_random_track()
-                self.add_game_event(f"Now playing: {self.current_track}" )
+                # self.add_game_event(f"Now playing: {self.current_track}" )
+                
                 
             if self.countDown <= 0:
                 self.counting = False
