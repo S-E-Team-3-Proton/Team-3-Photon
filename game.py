@@ -172,6 +172,11 @@ class GameState:
         self.counting = True
         self.running = False
         self.gameOver = False
+        #clear old data
+        server = get_app_server()
+        if server and hasattr(server, "clear_data"):
+            server.clear_data()
+            
         self.last_processed_i = 0
 
         self.update_server_info()
