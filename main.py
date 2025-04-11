@@ -53,6 +53,10 @@ def main():
         
     if game_state.db_connection:
         game_state.db_connection.close()
+
+    if pygame.mixer.get_init():
+        pygame.mixer.music.stop()
+        
     pygame.quit()
     
 
