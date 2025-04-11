@@ -28,6 +28,9 @@ def init_game():
 
     render.font_init(FONT, TITLE_FONT, BUTTON_FONT)
 
+    # initialize pygame mixer for music
+    pygame.mixer.init()
+
     app_client = UDPClient("127.0.0.1") #default 
     app_server = UDPServer("127.0.0.1") #default
     app_server.start()
@@ -62,6 +65,12 @@ class GameState:
         self.countDown = 30
         #Track index of last processed data point
         self.last_processed_i = 0
+         # Music tracks and management
+        self.available_tracks = ["Track01.mp3", "Track02.mp3", "Track03.mp3", 
+                            "Track04.mp3", "Track05.mp3", "Track06.mp3", 
+                            "Track07.mp3", "Track08.mp3"]
+        self.current_track = None
+        self.played_tracks = []
 
         for team in [self.red_team, self.green_team]:
             for player in team:
@@ -113,6 +122,44 @@ class GameState:
                 print(f"⚠️ Failed to remove equipment of {player_id}")
                 return False
         return False
+
+    def play_random_track(self):
+        """Selects and plays a random track that hasn't been played recently"""
+        import random
+        
+        # Get tracks that haven't been played yet
+        available = [track for track in self.available_tracks if track not in self.played_tracks]
+        
+        # If all tracks have been played, reset
+        if not available:
+            self.played_tracks = [self.current_track] if self.current_track else []
+            available = [track for track in self.available_tracks if track not in self.played_tracks]
+        
+        # Select a random track from available ones
+        self.current_track = random.choice(available)
+        
+        # Add to played tracks
+        self.played_tracks.append(self.current_track)
+        
+        # Keep track of last 3 tracks only
+        if len(self.played_tracks) > 3:
+            self.played_tracks.pop(0)
+        
+        # Play the track
+        try:
+            pygame.mixer.music.load(self.current_track)
+            pygame.mixer.music.play()  # Play once without looping
+            self.add_game_event(f"Now playing: {self.current_track}")
+        except Exception as e:
+            print(f"Error playing music: {e}")
+
+    
+    def stop_music(self):
+        """Stops the current music track"""
+        try:
+            pygame.mixer.music.stop()
+        except Exception as e:
+            print(f"Error stopping music: {e}")
     
     def __del__(self):
         if hasattr(self, 'db'):
@@ -148,6 +195,11 @@ class GameState:
         fps = 60
         if self.counting:
             self.countDown -= 1 /fps
+
+            if abs(self.countDown - 17.0) < 1/fps and not pygame.mixer.music.get_busy():
+                self.play_random_track()
+                self.add_game_event(f"Now playing: {self.current_track}" )
+                
             if self.countDown <= 0:
                 self.counting = False
                 self.running = True
@@ -166,6 +218,11 @@ class GameState:
                 self.process_data(app_client)
                 
                 self.timer -= 1/fps
+
+                # if music stops, play a new track
+                if not pygame.mixer.music.get_busy():
+                    self.play_random_track()
+                    
                 if self.timer <= 0:
                     self.running = False
                     self.gameOver = True
@@ -174,6 +231,8 @@ class GameState:
                         app_client.send_message('221')
                         print("Code 221 Sent")
                     self.add_game_event("Game over!")
+
+                    self.stop_music()
 
                 elif self.timer <= 30 * fps and self.timer > (30 * fps - fps):
                     self.add_game_event("30 Seconds Left!")
