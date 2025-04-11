@@ -197,7 +197,7 @@ class GameState:
         if self.counting:
             self.countDown -= 1 /fps
 
-            if abs(self.countDown - 17.0) < 1/fps and not pygame.mixer.music.get_busy():
+            if abs(self.countDown - 13.75) < 1/fps and not pygame.mixer.music.get_busy():
                 self.play_random_track()
                 # self.add_game_event(f"Now playing: {self.current_track}" )
                 
