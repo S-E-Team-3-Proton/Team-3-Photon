@@ -11,14 +11,16 @@ YELLOW = (255, 255, 0)
 FONT = None
 TITLE_FONT = None
 BUTTON_FONT = None
+BASE_FONT = None
 flash_time = 0
 
-def font_init(font, titlefont, button_font):
+def font_init(font, titlefont, button_font, base_font):
 
-    global FONT, TITLE_FONT, BUTTON_FONT
+    global FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT
     FONT = font
     TITLE_FONT = titlefont
     BUTTON_FONT = button_font
+    BASE_FONT = base_font
 
 def draw_view(screen, game_state):
     if game_state.active_view == "entry":
@@ -352,13 +354,19 @@ def drawScores(screen, team, x, y, color):
                 
             name_bckg = FONT.render(p_name, True, text_color)
             score_bckg = FONT.render(str(p_score), True, text_color)
+            if player.hit_base == True:
+                base_bckg = BASE_FONT.render('B', True, text_color)
             
             if i < 8:
-                screen.blit(name_bckg, (x + 1, yoffset + 5))
+                if player.hit_base == True:
+                    screen.blit(base_bckg, (x + 1, yoffset + 5))
+                screen.blit(name_bckg, (x + 16, yoffset + 5))
                 screen.blit(score_bckg, (x + 175 - score_bckg.get_width(), yoffset + 5))
                 yoffset += 30
             else:
-                screen.blit(name_bckg, (x + 186, yoffset2 + 5))
+                if player.hit_base == True:
+                    screen.blit(base_bckg, (x + 186, yoffset2 + 5))
+                screen.blit(name_bckg, (x + 201, yoffset2 + 5))
                 screen.blit(score_bckg, (x + 360 - score_bckg.get_width(), yoffset2 + 5))
                 yoffset2 += 30
 
