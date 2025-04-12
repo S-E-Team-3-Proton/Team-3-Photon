@@ -4,3 +4,4 @@ class Player:
         self.codename = codename 
         self.equipment_id = int(equipment_id) if equipment_id and equipment_id.isdigit() else 0
         self.score = 0
+        self.hit_base = False
