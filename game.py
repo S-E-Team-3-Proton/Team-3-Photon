@@ -9,6 +9,7 @@ import render
 FONT = None
 TITLE_FONT = None
 BUTTON_FONT = None
+BASE_FONT = None
 app_client = None
 app_server = None
 
@@ -21,12 +22,13 @@ both at network (127.0.0.1), default
 '''
 
 def init_game():
-    global FONT, TITLE_FONT, BUTTON_FONT, app_client, app_server
+    global FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT, app_client, app_server
     FONT = pygame.font.SysFont('Arial', 20)
     TITLE_FONT = pygame.font.SysFont('Arial', 24, bold=True)
     BUTTON_FONT = pygame.font.SysFont('Arial', 14)
+    BASE_FONT = pygame.font.SysFont('Phosphate Inline', 25)
 
-    render.font_init(FONT, TITLE_FONT, BUTTON_FONT)
+    render.font_init(FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT)
 
     # initialize pygame mixer for music
     pygame.mixer.init()
@@ -189,6 +191,7 @@ class GameState:
         for team in [self.red_team, self.green_team]:
             for player in team:
                 player.score = 0
+                player.hit_base = False
 
         self.add_game_event("Game countdown started...")
 
@@ -298,23 +301,43 @@ class GameState:
             self.last_processed_i = len(recievedData)
 
             for s_eid, t_eid in new_data:
-                shooter = self.find_player_by_eID(s_eid)
-                target = self.find_player_by_eID(t_eid)
+                # This checks to see if a base was hit
+                if t_eid == 53 or t_eid == 43:
+                    shooter = self.find_player_by_eID(s_eid)
+                    base = t_eid
 
-                if shooter and target:
-                    shooterTeam = self.get_player_team(shooter)
-                    targetTeam = self.get_player_team(target)
+                    if shooter:
+                        shooterTeam = self.get_player_team(shooter)
 
-                    if shooterTeam == targetTeam:
-                        shooter.score -= 10
-                        #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
-                        msg = f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}!"
-                        self.add_game_event(f"{msg:<50} -10 Points")
-                    else:
-                        shooter.score += 10
-                        #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
-                        msg = f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}!"
-                        self.add_game_event(f"{msg:<50} +10 Points")
+                        if shooterTeam == 'red' and base == 43:
+                            shooter.score += 100
+                            shooter.hit_base = True
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Green Base!"
+                            self.add_game_event(f"{msg:<50} +100 Points")
+                        elif shooterTeam == 'green' and base == 53:
+                            shooter.score += 100
+                            shooter.hit_base = True
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Red Base!"
+                            self.add_game_event(f"{msg:<50} +100 Points")
+
+                else:
+                    shooter = self.find_player_by_eID(s_eid)
+                    target = self.find_player_by_eID(t_eid)
+
+                    if shooter and target:
+                        shooterTeam = self.get_player_team(shooter)
+                        targetTeam = self.get_player_team(target)
+
+                        if shooterTeam == targetTeam:
+                            shooter.score -= 10
+                            #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}!"
+                            self.add_game_event(f"{msg:<50} -10 Points")
+                        else:
+                            shooter.score += 10
+                            #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}!"
+                            self.add_game_event(f"{msg:<50} +10 Points")
         except Exception as e:
             print(f"Error processing: {str(e)}")
 
