@@ -310,7 +310,7 @@ class GameState:
                         self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
                     else:
                         shooter.score += 10
-                        self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam} {target.codename}! + 10 points")
+                        self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
         except Exception as e:
             print(f"Error processing: {str(e)}")
 
