@@ -314,11 +314,15 @@ class GameState:
                             shooter.hit_base = True
                             msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Green Base!"
                             self.add_game_event(f"{msg:<50} +100 Points")
+
+                            app_client.send_message(str(base))
                         elif shooterTeam == 'green' and base == 53:
                             shooter.score += 100
                             shooter.hit_base = True
                             msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Red Base!"
                             self.add_game_event(f"{msg:<50} +100 Points")
+
+                            app_client.send_message(str(base))
 
                 else:
                     shooter = self.find_player_by_eID(s_eid)
@@ -333,11 +337,15 @@ class GameState:
                             #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
                             msg = f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}!"
                             self.add_game_event(f"{msg:<50} -10 Points")
+
+                            app_client.send_message(str(shooter.equipment_id))
                         else:
                             shooter.score += 10
                             #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
                             msg = f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}!"
                             self.add_game_event(f"{msg:<50} +10 Points")
+
+                            app_client.send_message(str(target.equipment_id))
         except Exception as e:
             print(f"Error processing: {str(e)}")
 
