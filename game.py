@@ -307,10 +307,14 @@ class GameState:
 
                     if shooterTeam == targetTeam:
                         shooter.score -= 10
-                        self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
+                        #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
+                        msg = f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}!"
+                        self.add_game_event(f"{msg:<50} -10 Points")
                     else:
                         shooter.score += 10
-                        self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
+                        #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
+                        msg = f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}!"
+                        self.add_game_event(f"{msg:<50} +10 Points")
         except Exception as e:
             print(f"Error processing: {str(e)}")
 
