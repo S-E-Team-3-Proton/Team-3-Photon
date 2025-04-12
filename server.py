@@ -85,9 +85,10 @@ class UDPServer:
                     self.received_data.append((sender_eid, target_eid))
 
                     #acknowledge hit registration
-                    response_address = (address[0], 7500)
-                    self.udp_socket.sendto(str(target_eid).encode(), response_address)
-                    print(f"Sent response: {target_eid} to {response_address}")
+                    # MOVED TO GAME AND CLIENT AS THIS IS ILLEGAL!!!
+                    # response_address = (address[0], 7500)
+                    # self.udp_socket.sendto(str(target_eid).encode(), response_address)
+                    # print(f"Sent response: {target_eid} to {response_address}")
                 except Exception as e:
                     print(f"Error Processing: {e}")
             except Exception as e:
