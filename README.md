@@ -9,7 +9,7 @@
 | aneigh02  | Alec Neighbors |
 
 # Note 1: We increased the allotted VB memory to 8 GB
-# Note 2: The VB's audio seems to have issues with some Macs. When testing we found the audio does not work on an intel macbook. It is recommended to run this on a VB running on a windows machine.
+# Note 2: The VB's audio drivers seem to have some issues when being run on a Macbook. The audio should work fine, but depending on the computer and the VB, the audio might cut every now and then. You'll know this is happening if you see a message in the console while the game is running that says ALSA ... underrun occured.
 
 ## Running the Game
 To install the necessary packages navigate to the project directory and run:
