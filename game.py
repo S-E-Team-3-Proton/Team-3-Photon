@@ -31,7 +31,7 @@ def init_game():
     render.font_init(FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT)
 
     # initialize pygame mixer for music
-    pygame.mixer.init()
+    # pygame.mixer.init()
 
     app_client = UDPClient("127.0.0.1") #default 
     app_server = UDPServer("127.0.0.1") #default
