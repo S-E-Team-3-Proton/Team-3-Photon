@@ -9,17 +9,29 @@ import render
 FONT = None
 TITLE_FONT = None
 BUTTON_FONT = None
+BASE_FONT = None
 app_client = None
 app_server = None
 
 
+'''
+During startup intialize:
+UDP Client (port 7500) - Broadcasts to connected equipment
+UDP Server (port 7501) - Recieves messages from individual equipment
+both at network (127.0.0.1), default
+'''
+
 def init_game():
-    global FONT, TITLE_FONT, BUTTON_FONT, app_client, app_server
+    global FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT, app_client, app_server
     FONT = pygame.font.SysFont('Arial', 20)
     TITLE_FONT = pygame.font.SysFont('Arial', 24, bold=True)
     BUTTON_FONT = pygame.font.SysFont('Arial', 14)
+    BASE_FONT = pygame.font.SysFont('Phosphate Inline', 25)
 
-    render.font_init(FONT, TITLE_FONT, BUTTON_FONT)
+    render.font_init(FONT, TITLE_FONT, BUTTON_FONT, BASE_FONT)
+
+    # initialize pygame mixer for music
+    # pygame.mixer.init()
 
     app_client = UDPClient("127.0.0.1") #default 
     app_server = UDPServer("127.0.0.1") #default
@@ -53,6 +65,14 @@ class GameState:
         self.timer = 6*60*60
         self.counting = False
         self.countDown = 30
+        #Track index of last processed data point
+        self.last_processed_i = 0
+         # Music tracks and management
+        self.available_tracks = ["Track01.mp3", "Track02.mp3", "Track03.mp3", 
+                            "Track04.mp3", "Track05.mp3", "Track06.mp3", 
+                            "Track07.mp3", "Track08.mp3"]
+        self.current_track = None
+        self.played_tracks = []
 
         for team in [self.red_team, self.green_team]:
             for player in team:
@@ -104,11 +124,49 @@ class GameState:
                 print(f"⚠️ Failed to remove equipment of {player_id}")
                 return False
         return False
+
+    def play_random_track(self):
+        """Selects and plays a random track that hasn't been played recently"""
+        import random
+        
+        # Get tracks that haven't been played yet
+        available = [track for track in self.available_tracks if track not in self.played_tracks]
+        
+        # If all tracks have been played, reset
+        if not available:
+            self.played_tracks = [self.current_track] if self.current_track else []
+            available = [track for track in self.available_tracks if track not in self.played_tracks]
+        
+        # Select a random track from available ones
+        self.current_track = random.choice(available)
+        
+        # Add to played tracks
+        self.played_tracks.append(self.current_track)
+        
+        # Keep track of last 3 tracks only
+        if len(self.played_tracks) > 3:
+            self.played_tracks.pop(0)
+        
+        # Play the track
+        try:
+            pygame.mixer.music.load(self.current_track)
+            pygame.mixer.music.play()  # Play once without looping
+            # self.add_game_event(f"Now playing: {self.current_track}")
+            print(f"Now playing: {self.current_track}")
+        except Exception as e:
+            print(f"Error playing music: {e}")
+
+    
+    def stop_music(self):
+        """Stops the current music track"""
+        try:
+            pygame.mixer.music.stop()
+        except Exception as e:
+            print(f"Error stopping music: {e}")
     
     def __del__(self):
         if hasattr(self, 'db'):
             self.db.disconnect()
-
 
     def gameStart(self, app_client):
         self.active_view = "game"
@@ -116,6 +174,14 @@ class GameState:
         self.counting = True
         self.running = False
         self.gameOver = False
+        #clear old data
+        server = get_app_server()
+        if server and hasattr(server, "clear_data"):
+            server.clear_data()
+            
+        self.last_processed_i = 0
+
+        self.update_server_info()
 
         self.countDown = 30.0
     
@@ -125,13 +191,25 @@ class GameState:
         for team in [self.red_team, self.green_team]:
             for player in team:
                 player.score = 0
+                player.hit_base = False
 
         self.add_game_event("Game countdown started...")
 
+    '''
+    F5>30 minute countdown>Send 202 to UDP port 7500>
+    Equipment begins accepting input and transmitting data
+    '''
+    
     def gameUpdate(self, app_client):
         fps = 60
         if self.counting:
             self.countDown -= 1 /fps
+
+            if abs(self.countDown - 14.00) < 1/fps and not pygame.mixer.music.get_busy():
+                self.play_random_track()
+                # self.add_game_event(f"Now playing: {self.current_track}" )
+                
+                
             if self.countDown <= 0:
                 self.counting = False
                 self.running = True
@@ -145,7 +223,16 @@ class GameState:
                 self.add_game_event(f"Game starts in {int(self.countDown)} seconds...")
         elif self.running:
             try:
+
+                #Process incoming hit data.  Checks for new hit data, calculates score, updates gamestate with new events and scores
+                self.process_data(app_client)
+                
                 self.timer -= 1/fps
+
+                # if music stops, play a new track
+                if not pygame.mixer.music.get_busy():
+                    self.play_random_track()
+                    
                 if self.timer <= 0:
                     self.running = False
                     self.gameOver = True
@@ -155,18 +242,112 @@ class GameState:
                         print("Code 221 Sent")
                     self.add_game_event("Game over!")
 
+                    self.stop_music()
+
                 elif self.timer <= 30 * fps and self.timer > (30 * fps - fps):
                     self.add_game_event("30 Seconds Left!")
             except:
                 print("Running Error")
                 self.timer = 6.0*60
         
-
+    #add event message to game event list
     def add_game_event(self, eventmsg):
         self.game_events.append(eventmsg)
         if len(self.game_events) > 50:
             self.game_events.pop(0)
 
+    #Synchronizes current team info with the server, allows server to know which equiipment ID is with which team.
+    def update_server_info(self):
+        server = get_app_server()
+        if server and hasattr(server, 'update_team_info'):
+            server.update_team_info(self.red_team, self.green_team)
+
+    #Some quick helper functions
+
+    def find_player_by_eID(self, e_id):
+        for team in [self.red_team, self.green_team]:
+            for player in team:
+                if player.equipment_id == e_id:
+                    return player
+        return None
+    
+    def get_player_team(self, player):
+        for p in self.red_team:
+            if p == player:
+                return 'red'
+        return 'green'
+
+    '''
+    Listen on 7501, record hits into recieved_data
+    Checks for hits, processes shooter & target, updates scores, generates game events
+    '''
+    def process_data(self, app_client):
+        try:
+            server = get_app_server()
+            if not server:
+                return
+            
+            recievedData = server.get_data()
+            if not recievedData:
+                return
+            
+            if not hasattr(self, 'last_processed_i'):
+                self.last_processed_i = 0
+            
+            new_data = recievedData[self.last_processed_i:]
+            if not new_data:
+                return
+            
+            self.last_processed_i = len(recievedData)
+
+            for s_eid, t_eid in new_data:
+                # This checks to see if a base was hit
+                if t_eid == 53 or t_eid == 43:
+                    shooter = self.find_player_by_eID(s_eid)
+                    base = t_eid
+
+                    if shooter:
+                        shooterTeam = self.get_player_team(shooter)
+
+                        if shooterTeam == 'red' and base == 43:
+                            shooter.score += 100
+                            shooter.hit_base = True
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Green Base!"
+                            self.add_game_event(f"{msg:<50} +100 Points")
+
+                            app_client.send_message(str(base))
+                        elif shooterTeam == 'green' and base == 53:
+                            shooter.score += 100
+                            shooter.hit_base = True
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit the Red Base!"
+                            self.add_game_event(f"{msg:<50} +100 Points")
+
+                            app_client.send_message(str(base))
+
+                else:
+                    shooter = self.find_player_by_eID(s_eid)
+                    target = self.find_player_by_eID(t_eid)
+
+                    if shooter and target:
+                        shooterTeam = self.get_player_team(shooter)
+                        targetTeam = self.get_player_team(target)
+
+                        if shooterTeam == targetTeam:
+                            shooter.score -= 10
+                            #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}! -10 points")
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} betrayed {target.codename}!"
+                            self.add_game_event(f"{msg:<50} -10 Points")
+
+                            app_client.send_message(str(shooter.equipment_id))
+                        else:
+                            shooter.score += 10
+                            #self.add_game_event(f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}! + 10 points")
+                            msg = f"{shooterTeam.capitalize()} {shooter.codename} hit {targetTeam.capitalize()} {target.codename}!"
+                            self.add_game_event(f"{msg:<50} +10 Points")
+
+                            app_client.send_message(str(target.equipment_id))
+        except Exception as e:
+            print(f"Error processing: {str(e)}")
 
 def get_app_client():
     return app_client

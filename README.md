@@ -9,6 +9,7 @@
 | aneigh02  | Alec Neighbors |
 
 # Note 1: We increased the allotted VB memory to 8 GB
+# Note 2: The VB's audio drivers seem to have some issues when being run on a Macbook, in our case it was an intel Macbook Pro. We recommend using a windows machine to run this program in a Debian Virtual Box.
 
 ## Running the Game
 To install the necessary packages navigate to the project directory and run:
@@ -44,13 +45,14 @@ python3 main.py
 ## Controls
 - **Up and Down Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
+  - **Note**: It will jump to the highest unfilled row, or if all are filled it will jump up to the top.
 - **RETURN**: Enters the typed information into the cell
   - **Note**: You must enter all of a player's information before you can move to change to a different player
 - **F1**: Edit player entry screen
   - **Note**: You can use this after a game is over to return to the player entry screen 
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F5**: Start the game
-- **F7**: Create a new game (Not Implemented)
+- **F7**: Create a new game (Not Implemented for this Project, can be added in a future iteration if wanted)
 - **F12**: Clear the current game setup
 
 ## Players Needed To Start the Game
@@ -67,6 +69,9 @@ python3 main.py
 - Overrides and deletes player information in the application when you enter new information in the same cell
 - You can start a 6 minute game
 - The game has a 30 seconds countdown before starting
+- The game will start some background audio during the 30 second countdown and will continue until the game ends
+- Players that hit the opposing team's base will receive a styleized letter B next to their name on the leaderboard for the rest of the game
+- The highest scoring team will have their score flashing during the game.
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:

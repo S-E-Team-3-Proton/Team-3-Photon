@@ -245,7 +245,17 @@ def handleInfo(event, game_state, app_client):
     elif event.key == pygame.K_UP and game_state.active_input == "p_id" and game_state.input_text == '':
         game_state.current_index = (game_state.current_index - 1) % 15
     elif event.key == pygame.K_TAB and game_state.active_input == "p_id" and game_state.input_text == '':
+        #switch team
         game_state.current_team = "green" if game_state.current_team == "red" else "red"
+        new_team = game_state.green_team if game_state.current_team == "green" else game_state.red_team
+        #find first unfilled player slot by player_id in the new team
+        for i in range(15):
+            if not new_team[i].player_id:
+                game_state.current_index = i
+                break
+        else:
+            #fallback to the top if no unfilled slots
+            game_state.current_index = 0
     elif event.key == pygame.K_BACKSPACE:
         game_state.input_text = game_state.input_text[:-1]
     else:

@@ -13,6 +13,8 @@ class UDPClient:
         self.message = message_In
         self.bytes_to_send = str.encode(self.message)
         self.udp_socket.sendto(self.bytes_to_send, (self.server_ip, self.server_port))
+
+        print(f"Sent response: {message_In} to {self.server_ip, self.server_port}")
    
     def set_network_address(self, ip):
         self.server_ip = ip

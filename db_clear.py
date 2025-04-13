@@ -22,7 +22,7 @@ def clear_database():
         print(f"Database cleared successfully!")
         print(f"Current number of players in database: {count}")
         
-    except:
+    except Exception as e:
         print(f"Error while clearing database: {e}")
         if connection:
             connection.rollback()
