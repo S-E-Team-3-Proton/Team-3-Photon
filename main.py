@@ -1,3 +1,6 @@
+import os
+os.environ['SDL_AUDIODRIVER'] = 'alsa'
+
 import pygame
 from game import init_game, GameState, get_app_client, get_app_server
 from render import draw_view
@@ -5,8 +8,11 @@ from event_handler import handle_event
 
 def main():
 
+    pygame.mixer.pre_init(44100, -16, 2, 8192)
     pygame.init()
     pygame.font.init()
+    print("Mixer status:", pygame.mixer.get_init())
+
 
     init_game()
 
