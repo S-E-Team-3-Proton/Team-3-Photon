@@ -9,7 +9,7 @@
 | aneigh02  | Alec Neighbors |
 
 # Note 1: We increased the allotted VB memory to 8 GB
-# Note 2: The VB's audio drivers seem to have some issues when being run on a Macbook. The audio should work fine, but depending on the computer and the VB, the audio might cut every now and then. You'll know this is happening if you see a message in the console while the game is running that says ALSA ... underrun occured.
+# Note 2: The VB's audio drivers seem to have some issues when being run on a Macbook, in our case it was an intel Macbook Pro. We recommend using a windows machine to run this program in a Debian Virtual Box.
 
 ## Running the Game
 To install the necessary packages navigate to the project directory and run:
@@ -45,6 +45,7 @@ python3 main.py
 ## Controls
 - **Up and Down Arrow Keys**: Navigate between players
 - **TAB**: Switch between Red and Green teams
+  - **Note**: It will jump to the highest unfilled row, or if all are filled it will jump up to the top.
 - **RETURN**: Enters the typed information into the cell
   - **Note**: You must enter all of a player's information before you can move to change to a different player
 - **F1**: Edit player entry screen
@@ -68,6 +69,9 @@ python3 main.py
 - Overrides and deletes player information in the application when you enter new information in the same cell
 - You can start a 6 minute game
 - The game has a 30 seconds countdown before starting
+- The game will start some background audio during the 30 second countdown and will continue until the game ends
+- Players that hit the opposing team's base will receive a styleized letter B next to their name on the leaderboard for the rest of the game
+- The highest scoring team will have their score flashing during the game.
 
 ### Database Setup
 The game connects to a PostgreSQL database. Ensure you have a PostgreSQL database set up with the following details:
