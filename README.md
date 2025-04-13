@@ -9,6 +9,7 @@
 | aneigh02  | Alec Neighbors |
 
 # Note 1: We increased the allotted VB memory to 8 GB
+# Note 2: The VB's audio seems to have issues with some Macs. When testing we found the audio does not work on an intel macbook. It is recommended to run this on a VB running on a windows machine.
 
 ## Running the Game
 To install the necessary packages navigate to the project directory and run:
@@ -50,7 +51,7 @@ python3 main.py
   - **Note**: You can use this after a game is over to return to the player entry screen 
 - **F2**: Configure game parameters (Change Network Address Here)
 - **F5**: Start the game
-- **F7**: Create a new game (Not Implemented)
+- **F7**: Create a new game (Not Implemented for this Project, can be added in a future iteration if wanted)
 - **F12**: Clear the current game setup
 
 ## Players Needed To Start the Game
