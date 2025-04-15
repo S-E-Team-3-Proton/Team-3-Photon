@@ -58,6 +58,7 @@ python3 main.py
 ## Players Needed To Start the Game
 - Our code requires the game to have one player on each team to run the game. So, make sure that there is at least one player on each team to avoid errors.
 - This can be changed in the future, we felt this worked best for standard games.
+  - **Note**: We updated the traffic generator to a v3 so it includes friendly fire scenarios. You need at least two players on each team for this.
 
 ## Features
 - Query and insert player details into a PostgreSQL database
